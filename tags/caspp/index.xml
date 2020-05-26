@@ -1,0 +1,56 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>caspp - 标签 - my blog</title>
+        <link>https://yrc0d3.github.io/tags/caspp/</link>
+        <description>caspp - 标签 - my blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 22 Mar 2020 22:27:22 &#43;0800</lastBuildDate><atom:link href="https://yrc0d3.github.io/tags/caspp/" rel="self" type="application/rss+xml" /><item>
+    <title>[CSAPP]第七章 链接</title>
+    <link>https://yrc0d3.github.io/csapp_chapter7/</link>
+    <pubDate>Sun, 22 Mar 2020 22:27:22 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/csapp_chapter7/</guid>
+    <description><![CDATA[链接(linking)是将各种代码和数据片段收集并组合成为一个单一文件的过程，这个文件可被加载(复制)到内存并执行。 执行时机： 编译时(com]]></description>
+</item><item>
+    <title>[CSAPP]第六章 存储器层次结构</title>
+    <link>https://yrc0d3.github.io/csapp_chapter6/</link>
+    <pubDate>Sun, 09 Feb 2020 21:41:22 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/csapp_chapter6/</guid>
+    <description><![CDATA[6.1 存储技术 6.1.1 随机访问存储器 1. 静态RAM SRAM，有电就保持不变，贵。 2. 动态RAM DRAM，需要刷新。 3. 传统的DRAM 电路设计者将DRAM组织]]></description>
+</item><item>
+    <title>[CSAPP]第五章 优化程序性能</title>
+    <link>https://yrc0d3.github.io/csapp_chapter5/</link>
+    <pubDate>Sat, 01 Feb 2020 23:17:28 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/csapp_chapter5/</guid>
+    <description><![CDATA[编写高效程序需要做到以下几点： 我们必须选择一组适当的算法和数据结构。 我们必须编写出编译器能够有效优化以转换成高效可执行代码的源代码。 针对处理]]></description>
+</item><item>
+    <title>[CSAPP]第四章 处理器体系结构</title>
+    <link>https://yrc0d3.github.io/csapp_chapter4/</link>
+    <pubDate>Sun, 29 Dec 2019 23:38:09 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/csapp_chapter4/</guid>
+    <description><![CDATA[一个处理器支持的指令和指令的字节级编码称为它的指令集体系结构(Instruction-Set Architecture, ISA)。 本章首先定义一个简单的指令集，作为我]]></description>
+</item><item>
+    <title>[CSAPP]第三章 程序的机器级表示</title>
+    <link>https://yrc0d3.github.io/csapp_chapter3/</link>
+    <pubDate>Mon, 09 Dec 2019 23:04:22 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/csapp_chapter3/</guid>
+    <description><![CDATA[3.1 历史观点 略 3.2 程序编码 假设一个C程序，有两个文件p1.c和p2.c，可以使用命令gcc -Og -o p p1.c p2.c来编译。编译选项-Og告诉编译器使用会]]></description>
+</item><item>
+    <title>[CSAPP]第二章 信息的表示和处理</title>
+    <link>https://yrc0d3.github.io/csapp_chapter2/</link>
+    <pubDate>Thu, 05 Dec 2019 22:35:26 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/csapp_chapter2/</guid>
+    <description><![CDATA[2.1 信息存储 2.1.1 十六进制表示法 2.1.2 字数据大小 2.1.3 寻址和字节顺序 2.1.4 表示字符串 2.1.5 表示代码 2.1.6 布尔代数简介 2.1.7 C语言中的位级运算 2.1.8 C语言中的逻辑运算 2.1.9 C语言中]]></description>
+</item><item>
+    <title>[CSAPP]第一章 计算机系统漫游</title>
+    <link>https://yrc0d3.github.io/csapp_chapter1/</link>
+    <pubDate>Mon, 02 Dec 2019 22:56:45 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/csapp_chapter1/</guid>
+    <description><![CDATA[示例程序hello.c 1 2 3 4 5 6 7 #include &lt;stdio.h&gt; int main() { printf(&#34;hello, world\n&#34;); return 0; } 1.1 信息就是bits+context hello.c程序是以字节序列的方式存储在文件中的]]></description>
+</item></channel>
+</rss>

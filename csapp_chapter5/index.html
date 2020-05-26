@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>[CSAPP]第五章 优化程序性能 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="[CSAPP]第五章 优化程序性能" />
+<meta property="og:description" content="编写高效程序需要做到以下几点： 我们必须选择一组适当的算法和数据结构。 我们必须编写出编译器能够有效优化以转换成高效可执行代码的源代码。 针对处理" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yrc0d3.github.io/csapp_chapter5/" />
+<meta property="og:image" content="https://yrc0d3.github.io/logo.png"/>
+<meta property="article:published_time" content="2020-02-01T23:17:28+08:00" />
+<meta property="article:modified_time" content="2020-02-01T23:17:28+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://yrc0d3.github.io/logo.png"/>
+
+<meta name="twitter:title" content="[CSAPP]第五章 优化程序性能"/>
+<meta name="twitter:description" content="编写高效程序需要做到以下几点： 我们必须选择一组适当的算法和数据结构。 我们必须编写出编译器能够有效优化以转换成高效可执行代码的源代码。 针对处理"/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/csapp_chapter5/" /><link rel="prev" href="https://yrc0d3.github.io/csapp_chapter4/" /><link rel="next" href="https://yrc0d3.github.io/csapp_chapter6/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "[CSAPP]第五章 优化程序性能",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/yrc0d3.github.io\/csapp_chapter5\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/yrc0d3.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","keywords": "caspp","wordcount":  6923 ,
+        "url": "https:\/\/yrc0d3.github.io\/csapp_chapter5\/","datePublished": "2020-02-01T23:17:28+08:00","dateModified": "2020-02-01T23:17:28+08:00","publisher": {
+                "@type": "Organization",
+                "name": "xxxx",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/yrc0d3.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yrc0d3"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="my blog"></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts"> 文章 </a><a class="menu-item" href="/tags"> 标签 </a><a class="menu-item" href="/categories"> 分类 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="my blog"></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts" title="">文章</a><a class="menu-item" href="/tags" title="">标签</a><a class="menu-item" href="/categories" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">[CSAPP]第五章 优化程序性能</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>读书笔记</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-02-01">2020-02-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6923 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#51-优化编译器的能力和局限性">5.1 优化编译器的能力和局限性</a></li>
+    <li><a href="#52-表示程序性能">5.2 表示程序性能</a></li>
+    <li><a href="#53-程序示例">5.3 程序示例</a></li>
+    <li><a href="#54-消除循环的低效率">5.4 消除循环的低效率</a></li>
+    <li><a href="#55-减少过程调用">5.5 减少过程调用</a></li>
+    <li><a href="#56-消除不必要的内存引用">5.6 消除不必要的内存引用</a></li>
+    <li><a href="#57-理解现代处理器">5.7 理解现代处理器</a>
+      <ul>
+        <li><a href="#571-整体操作">5.7.1 整体操作</a></li>
+        <li><a href="#572-功能单元的性能">5.7.2 功能单元的性能</a></li>
+        <li><a href="#573-处理器操作的抽象模型">5.7.3 处理器操作的抽象模型</a>
+          <ul>
+            <li><a href="#1-从机器级代码到数据流图">1. 从机器级代码到数据流图</a></li>
+            <li><a href="#2-其他性能因素">2. 其他性能因素</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#58-循环展开">5.8 循环展开</a></li>
+    <li><a href="#59-提高并行性">5.9 提高并行性</a></li>
+    <li><a href="#591-多个累积变量">5.9.1 多个累积变量</a></li>
+    <li><a href="#592-重新结合变换">5.9.2 重新结合变换</a></li>
+    <li><a href="#510-优化合并代码的结果小结">5.10 优化合并代码的结果小结</a></li>
+    <li><a href="#511-一些限制因素">5.11 一些限制因素</a>
+      <ul>
+        <li><a href="#5111-寄存器溢出">5.11.1 寄存器溢出</a></li>
+        <li><a href="#5112-分支预测和预测错误处罚">5.11.2 分支预测和预测错误处罚</a>
+          <ul>
+            <li><a href="#1-不要过分关心可预测的分支">1. 不要过分关心可预测的分支</a></li>
+            <li><a href="#2-书写适合用条件传送实现的代码">2. 书写适合用条件传送实现的代码</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#512-理解内存性能">5.12 理解内存性能</a>
+      <ul>
+        <li><a href="#5121-加载的性能">5.12.1 加载的性能</a></li>
+        <li><a href="#5122-存储的性能">5.12.2 存储的性能</a></li>
+      </ul>
+    </li>
+    <li><a href="#513-应用性能提高技术">5.13 应用：性能提高技术</a></li>
+    <li><a href="#514-确认和消除性能瓶颈">5.14 确认和消除性能瓶颈</a>
+      <ul>
+        <li><a href="#5141-程序剖析">5.14.1 程序剖析</a></li>
+        <li><a href="#5142-使用剖析程序来知道优化">5.14.2 使用剖析程序来知道优化</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>编写高效程序需要做到以下几点：</p>
+<ol>
+<li>我们必须选择一组适当的算法和数据结构。</li>
+<li>我们必须编写出编译器能够有效优化以转换成高效可执行代码的源代码。</li>
+<li>针对处理运算量特别大的计算，将一个任务分解成多个部分，这些部分可以在多核和多处理器的某种组合上并行地计算。（第12章再讲）</li>
+</ol>
+<p>通常，程序员必须在实现和维护程序的简单性与它的运行速度之间做出权衡。</p>
+<p>为了使程序性能最大化，程序员和编译器都需要一个目标机器的模型，指明如何处理指令，以及各个操作的时序特性。程序员必须理解这些处理器是如何工作的，从而调整他们的程序以获得最大的速度。基于Intel和AMD处理器最近的设计，我们提出了这种机器的一个高级模型。我们还设计了一种图形数据流(data-flow)表示法，可以是处理器对指令的执行形象化，我们还可以利用它预测程序的性能。</p>
+<p>了解了处理器的运作，我们就可以进行程序优化的第二步，利用处理器提供的指令级并行(instruction-level parallelism)能力，同时执行多条指令。</p>
+<p>研究程序的汇编代码表示是理解编译器以及产生的代码会如何运作的最有效手段之一。</p>
+<h2 id="51-优化编译器的能力和局限性">5.1 优化编译器的能力和局限性</h2>
+<p>现代编译器运用复杂精细的算法来确定一个程序中计算的是什么值，以及它们是被如何使用的。然后会利用一些机会来简化表达式，在几个不同的地方使用同一个计算，以及降低一个给定的计算必须被执行的次数。大多数编译器，包括GCC，向用户提供了一些对它们所使用的优化的控制，其中最简单的控制就是指定<strong>优化级别</strong>。</p>
+<p>编译器必须很小心地对程序只使用<strong>安全的</strong>优化，也就是说对于程序可能遇到的所有可能的情况，在C语言标准提供的保证之下，优化后得到的程序和未优化的版本有一样的行为。</p>
+<p>下面看个示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">void twiddle1(long *xp, long *yp)
+{
+    *xp += *yp;
+    *yp += *xp;
+}
+
+void twiddle2(long *xp, long *yp)
+{
+    *xp += 2* *yp;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>乍一看，两个过程似乎有相同的行为。但当xp等于yp时，结果就不同了。这种两个指针可能指向同一个内存位置的情况称为<strong>内存别名使用(memory aliasing)</strong>。在只执行安全的优化中，编译器必须假设不同的指针可能会指向内存中同一个位置。</p>
+<p>第二个妨碍优化的因素是函数调用。当被优化的函数有<strong>副作用</strong>时，很可能优化后的行为是错误的。</p>
+<p>包含函数调用的代码可以用一个称为内联函数替换(inline substitution或inlining)的过程进行优化。此时，将函数调用替换为函数体。在某些情况下，最好能阻止编译器执行内联替换，如GDB。</p>
+<h2 id="52-表示程序性能">5.2 表示程序性能</h2>
+<p>我们引入度量标准<strong>每元素的周期数(Cycles Per Element, CPE)</strong>，作为一种表示程序新能并指导我们改进代码的方法。CPE这种度量标准帮助我们在更细节的级别上理解迭代程序的循环性能。这样的度量标准对执行重复计算的程序来说是很适当的。</p>
+<p>处理器活动的顺序是由时钟控制的，时钟提供了某个频率的规律信号，通常用<strong>千兆赫兹(GHz)</strong>，即十亿周期每秒来表示。每个时钟周期的时间是时钟频率的倒数。从程序员的角度来看，用时钟周期来表示度量标准要比用纳秒或者皮秒来表示有帮助得多。用时钟周期来表示，度量值表示的是执行了多少条指令，而不是时钟运行得有多快。</p>
+<p>图5-1中的函数用来计算向量的前置和(prefix sum)。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_1.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_1.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_1.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_1.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_1.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_1.png" /></p>
+<p>这样一个过程所需要的时间可以用一个常数加上一个与被处理元素个数成正比的因子来描述。图5-2是这两个函数需要的周期数关于n的取值范围图。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_2.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_2.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_2.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_2.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_2.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_2.png" /></p>
+<p>使用最小二乘拟合(least squares fit)，psum1和psum2的运行时间分别接近等式<code>368+9.0n</code>和<code>368+6.0n</code>。其中n的系数称为**每元素的周期数(CPE)**的有效值。</p>
+<h2 id="53-程序示例">5.3 程序示例</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct {
+    long len;
+    data_t *data;
+} vec_rec, *vec_prt;
+</code></pre></td></tr></table>
+</div>
+</div><p><code>data_t</code>表示基本元素的数据类型。在测试中，我们度量代码对于整数(C语言的int和long)和浮点数(C语言的float和double)数据的性能，因此会使用类似如下的声明：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef long data_t;
+</code></pre></td></tr></table>
+</div>
+</div><p>图5-4给出的是一些生成向量、访问向量元素以及确定向量长度的基本过程。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_4.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_4.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_4.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_4.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_4.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_4.png" /></p>
+<p>作为一个优化示例，图5-5中的代码，使用某种运算，讲一个向量中所有的元素合并成一个值。通过使用编译时常数IDENT和OP的不同定义，这段代码可以重编译成对数据执行不同的运算。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5.png" /></p>
+<p>以下声明可对向量的元素求和：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">#define IDENT 0
+#define OP +
+</code></pre></td></tr></table>
+</div>
+</div><p>以下声明可对向量的元素求乘积：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">#define IDENT 1
+#define OP *
+</code></pre></td></tr></table>
+</div>
+</div><p>在我们的讲述中，我们会对这段代码进行一系列的变化，写出这个合并函数的不同版本。</p>
+<p>作为一个起点，下表给出的是combine1的CPE度量值，它运行在我们的参考机上(一台Intel Core i7 Haswell处理器机器)。实验显示，32位整数和64位整数，性能相同。浮点数也一样。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5_result.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5_result.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5_result.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5_result.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5_result.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5_result.png" /></p>
+<p>从中可以看出，使用命令行选项&rdquo;-O1&quot;进行基本优化，都能显著提高程序性能。</p>
+<h2 id="54-消除循环的低效率">5.4 消除循环的低效率</h2>
+<p>识别循环中要执行多次但是计算结果不会改变的计算，将其移动到循环外面。</p>
+<p>图5-6是combine2的代码。与combine1相比，性能提升了不少。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_6.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_6.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_6.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_6.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_6.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_6.png" /></p>
+<h2 id="55-减少过程调用">5.5 减少过程调用</h2>
+<p>图5-9是combine3的代码。与combine2相比，内循环中没有函数调用。但性能与combine2相比基本没有提升。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_9.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_9.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_9.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_9.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_9.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_9.png" /></p>
+<h2 id="56-消除不必要的内存引用">5.6 消除不必要的内存引用</h2>
+<p>图5-10是combine4的代码。与combine3相比，每次迭代的内存操作，从两次读和一次写，减少到只需要一次读。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10.png" /></p>
+<h2 id="57-理解现代处理器">5.7 理解现代处理器</h2>
+<p>如果试图进一步提高性能，必须考虑利用处理器微体系结构的优化，也就是处理器用来执行指令的底层系统设计。</p>
+<p>在代码级上，看上去似乎是一次执行一条指令，每条指令都包括从寄存器或内存取值，执行一个操作，并把结果存回到一个寄存器或内存位置。在实际的处理器中，是同时对多条指令求值的，这个现象称为<strong>指令级并行</strong>。</p>
+<p>虽然现代微处理器的详细设计超出了本书讲授的范围，对这些微处理器的原则有一般性的了解就足够理解它们如何实现指令级并行。我们会发现两种下界描述了程序的最大性能。当一系列操作必须按照严格顺序执行时，就会遇到<strong>延迟界限(latency bound)</strong>，因为在下一条指令之前，这条指令必须结束。当代码中的数据相关限制了处理器利用指令级并行的能力时，延迟界限能够限制程序性能。**吞吐量界限(throughput bound)**刻画了处理器功能单元的原始计算能力。这个界限时程序性能的终极限制。</p>
+<h3 id="571-整体操作">5.7.1 整体操作</h3>
+<p>图5-11是现代微处理器的一个非常简单化的示意图。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_11.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_11.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_11.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_11.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_11.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_11.png" /></p>
+<p>这些处理器在每个时钟周期可以执行多个操作，而且是乱序的。整个设计中有两个主要部分：<strong>指令控制单元(Instruction Control Unit, ICU)<strong>和</strong>执行单元(Execution Unit, EU)</strong>。前者负责从内存中读出指令序列，并根据这些指令序列生成一组针对程序数据的基本操作；而后者执行这些操作。</p>
+<p>ICU从**指令高速缓存(instruction cache，包含最近访问的指令)**中读取指令。通常ICU会在当前正在执行的指令很早之前取指，这样它才有足够的时间对指令译码，并把操作发送到EU。**指令控制(fetch control)**包括分支预测，以完成确定取哪些指令的任务。</p>
+<p>**指令译码(instruction decode)**接收实际的程序指令，并把它们转换成一组基本操作。这种译码逻辑对指令进行分解，允许任务在一组专门的硬件单元之间进行分割。这些单元可以并行地执行多条指令的不同部分。</p>
+<p>EU接收来自取指单元的操作。通常，每个时钟周期会接收多个操作。这些操作会被分派到一组**功能单元(functional units)**中，他们会执行实际的操作。这些功能单元用来处理不同类型的操作。</p>
+<p>在ICU中，<strong>退役单元(retirement unit)<strong>记录正在进行的处理，并确保它遵守机器级程序的顺序语义。任何对程序寄存器的更新都只会在指令退役时才会发生，只有在处理器能够确信导致这条指令的所有分支都预测正确了，才会这样做。为了加速一条指令到另一条指令的结果的传送，许多此类信息时在执行单元之间交换的，即图中的</strong>操作结果(opration results)</strong>。</p>
+<h3 id="572-功能单元的性能">5.7.2 功能单元的性能</h3>
+<p>图5-12是Intel Core i7 Haswell参考机的一些算术运算的性能：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_12.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_12.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_12.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_12.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_12.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_12.png" /></p>
+<p>表示运算性能的指标：</p>
+<ul>
+<li>延迟(latency)：表示完成运算所需要的总时间</li>
+<li>发射时间(issue time)：表示两个连续的同类型的运算之间需要的最小时钟周期数</li>
+<li>容量(capacity)：表示能够执行该运算的功能单元的数量</li>
+</ul>
+<p>可以看到，加法和乘法的发射时间都是1，意思是每个时钟周期，处理器都可以开始一条新的这样的运算。这种很短的发射时间是通过使用流水线(pipeline)实现的。</p>
+<h3 id="573-处理器操作的抽象模型">5.7.3 处理器操作的抽象模型</h3>
+<p>这一小节介绍了一个分析在现代处理器上执行的机器级程序性能的工具&ndash;程序的<strong>数据流(data-flow)<strong>表示。这是一种图形化的表示方法，展现了不同操作之间的数据相关是如何限制它们的执行顺序的。这些限制形成了图中的</strong>关键路径(critical path)</strong>，这是执行一组机器指令所需时钟周期数的一个下界。</p>
+<h4 id="1-从机器级代码到数据流图">1. 从机器级代码到数据流图</h4>
+<p>程序的数据流表示是非正式的。我们只是想用它来形象地描述程序中的数据相关是如何主宰程序的性能的。下面以combine4(图5-10)为例来描述数据流表示法。我们将注意力集中在循环执行的计算上，因为对于大向量来说，这是决定性能的主要因素。</p>
+<p>我们考虑类型为double的数据、以乘法作为合并运算的情况。这个循环编译出的代码如下：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_7_3_1_instructions.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_7_3_1_instructions.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_7_3_1_instructions.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_7_3_1_instructions.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_7_3_1_instructions.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_7_3_1_instructions.png" /></p>
+<p>如图5-13，在我们假想的处理器设计中，指令译码器会把这4条指令扩展成为一系列的五步操作：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_13.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_13.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_13.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_13.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_13.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_13.png" /></p>
+<p>顶部方框表示循环开始时寄存器的值，底部的方框表示最后寄存器的值。</p>
+<p>对于形成循环的代码片段，我们可以将访问到的寄存器分成四类：</p>
+<ul>
+<li>只读：%rax</li>
+<li>只写：本例中没有</li>
+<li>局部：这些寄存器在循环内部被修改和使用，迭代与迭代之间不相关。本例中的条件码寄存器就是。</li>
+<li>循环：对于循环来说，这些寄存器既作为源值，又作为目的，一次迭代中产生的值会在另一次迭代中使用。%rds和%xmm0就是。</li>
+</ul>
+<p>正如我们会看到的，循环寄存器之间的操作链决定了限制性能的数据相关。</p>
+<p>图5-14是对图5-13的进一步改进，目标是只给出影响程序执行时间的操作和数据相关。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_14.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_14.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_14.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_14.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_14.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_14.png" /></p>
+<p>图5-15给出了函数combine4内循环的n次迭代的数据流表示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_15.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_15.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_15.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_15.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_15.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_15.png" /></p>
+<p>我们可以看到，程序又两条数据相关链，分别对应操作mul和add对程序值acc和data+i的修改。假设浮点乘法延迟为5个周期，整数加法延迟为1个周期，那么左边的链会成为关键路径。</p>
+<h4 id="2-其他性能因素">2. 其他性能因素</h4>
+<p>对于整数加法的情况，我们对combine4的测试表明CPE为1.27，而不是根据图5-15中预测的CPE为1，测试值比预测值要慢。这说明，数据流表示中的关键路径提供的只是程序需要周期数的下界。还有其他一些因素会限制性能，包括可用的功能单元的数量和任何一步中功能单元之间能够传递数据值的数量。</p>
+<p>总结一下combine4的性能分析：我们对程序操作的抽象数据流表示说明，combine4的关键路径长<code>L * n</code>是由对程序值acc的连续更新造成的，这条路径将CPE限制为最多L。</p>
+<p>看上去，延迟界限是基本的限制，决定了我们的合并运算能够执行多快。接下来的任务是重新调整操作的结构，增强指令的并行性。我们想对程序做变换，使得唯一的限制变成吞吐量界限，得到接近于1.00的CPE。</p>
+<h2 id="58-循环展开">5.8 循环展开</h2>
+<p>循环展开是一种程序变换，通过增加每次迭计算的元素的数量，减少循环的迭代次数。</p>
+<p>图5-16是合并代码使用“$2 \times 1$循环展开”的版本。每次迭代，循环索引i加2，在一次迭代中对数据元素i和i+1使用合并运算。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_16.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_16.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_16.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_16.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_16.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_16.png" /></p>
+<p>按这个思想归纳为对一个循环按任意因子k进行展开，由此产生$k \times 1$循环展开，它可以将性能改进到达到延迟界限，但不能超过。</p>
+<h2 id="59-提高并行性">5.9 提高并行性</h2>
+<h2 id="591-多个累积变量">5.9.1 多个累积变量</h2>
+<p>图5-21展示了“$2 \times 2$循环展开”。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_21.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_21.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_21.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_21.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_21.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_21.png" /></p>
+<p>归纳可得到$k \times k$循环展开。当k足够大时，程序性能可达到吞吐量界限。</p>
+<h2 id="592-重新结合变换">5.9.2 重新结合变换</h2>
+<p>图5-26给出了combine7，它与combine5的区别在于内循环中元素合并的方式。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_26.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_26.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_26.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_26.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_26.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_26.png" /></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// combine5
+acc = (acc OP data[i]) OP data[i+1];
+// combine7
+acc = acc OP (data[i] OP data[i+1]);
+</code></pre></td></tr></table>
+</div>
+</div><p>差别仅在于两个括号时如何放置的。我们称之为<strong>重新结合变换(reassociation transformatino)</strong>。</p>
+<p>整数加法的性能没变化，整数乘法、浮点加法、浮点乘法的性能，则提升了一倍。</p>
+<p>总的来说，重新结合变换能够减少计算中关键路径上操作的数量，通过更好地利用功能单元的流水线能力得到更好的性能。</p>
+<h2 id="510-优化合并代码的结果小结">5.10 优化合并代码的结果小结</h2>
+<p>下表总结了对于标量(scalar)代码所获得的结果。使用多项优化技术，我们获得的CPE已经接近于0.50和1.00的吞吐量界限，只受限于功能单元的容量。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10_result.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10_result.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10_result.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10_result.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10_result.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_10_result.png" /></p>
+<h2 id="511-一些限制因素">5.11 一些限制因素</h2>
+<h3 id="5111-寄存器溢出">5.11.1 寄存器溢出</h3>
+<p>循环并行性的好处受汇编代码描述计算的能力限制。如果我们的并行度p超过了可用的寄存器数量，那么编译器会诉诸<strong>溢出(spilling)</strong>，将某些临时值存放到内存中，通常是在运行时堆栈上分配空间。</p>
+<p>一旦编译器必须要诉诸寄存器溢出，那么维护多个累积变量的优势就很可能消失。幸运的是，x86-64有足够多的寄存器，大多数循环出现寄存器溢出之前就将达到吞吐量限制。</p>
+<h3 id="5112-分支预测和预测错误处罚">5.11.2 分支预测和预测错误处罚</h3>
+<h4 id="1-不要过分关心可预测的分支">1. 不要过分关心可预测的分支</h4>
+<h4 id="2-书写适合用条件传送实现的代码">2. 书写适合用条件传送实现的代码</h4>
+<h2 id="512-理解内存性能">5.12 理解内存性能</h2>
+<p>到目前为止，我们写的所有代码和测试，只访问相对较少的内存。</p>
+<p>所有的现代处理器都包含一个或多个**高速缓存(cache)**存储器，以对这样少量的存储器提供快速的访问。本节会进一步研究涉及加载(从内存读到寄存器)和存储(从寄存器写到内存)操作的程序的性能，只考虑所有的数据都存放在高速缓存中的情况。</p>
+<h3 id="5121-加载的性能">5.12.1 加载的性能</h3>
+<p>一个包含加载操作的程序的性能既依赖于流水线的能力，也依赖于加载单元的延迟。</p>
+<p>要确定一台机器上加载造作的延迟，我们可以建立由一系列加载操作组成的一个计算，一条加载操作的结果决定下一条操作的地址。图5-31中计算链表长度的函数就是例子。测试表明函数list_len的CPE为4.00，我们认为这直接表明了加载操作的延迟。事实上，这个测试结果与文档中参考机的L1级cache的4周期访问时间是一致的，相关内容将在6.4节中讨论。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_31.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_31.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_31.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_31.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_31.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_31.png" /></p>
+<h3 id="5122-存储的性能">5.12.2 存储的性能</h3>
+<p>存储操作的性能，尤其是与加载操作的相互关系，包括一些很细微的问题。</p>
+<p>与记载操作一样，在大多数情况下，存储操作能够在完全流水线化的模式中工作，每个周期开始一条新的存储。存储操作并不影响任何的寄存器值，因此一系列存储操作不会产生数据相关。只有加载操作会受存储操作结果的影响，因为只有加载操作能从由存储操作写的那个位置读回值。</p>
+<p>图5-33说明了加载和存储操作之间可能的相互影响。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_33.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_33.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_33.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_33.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_33.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_33.png" /></p>
+<p>经过测试，示例A的CPE1.3，示例B的CPE为7.3。示例B中存在写/读相关(write/read dependency)&ndash;一个内存读的结果依赖于一个最近的内存写，导致处理速度下降约6个时钟周期。</p>
+<p>为了了解原因，我们必须更加仔细地看看加载和存储执行单元，如图5-34所示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_34.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_34.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_34.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_34.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_34.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_34.png" /></p>
+<p>存储单元包含一个<strong>存储缓冲区(store buffer)</strong>，它包含已经被发射到存储单元而又还没完成的存储操作的地址和数据，这里的完成包括更新cache。提供这样一个缓冲区，使得一系列存储操作不必等待每个操作都更新cache就能够执行。当一个加载操作完成时，它必须检查存储缓冲区中的条目，看有没有地址相匹配。如果有地址相匹配，它就取出相应的数据条目作为加载操作的结果。</p>
+<p>图5-35给出了这个循环代码的数据流表示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_35.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_35.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_35.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_35.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_35.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_35.png" /></p>
+<p>图5-36说明了write_read内循环操作之间的数据相关。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_36.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_36.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_36.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_36.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_36.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_36.png" /></p>
+<p>图5-37说明的是内循环的多次迭代形成的数据相关。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_37.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_37.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_37.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_37.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_37.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_37.png" /></p>
+<p>对于示例A，有不同的源和目的地址，加载和存储操作可以独立进行，因此唯一的关键路径是由减少变量cnt形成的，这使得CPE等于1.0。对于示例B，源和目的地址相同，s_data和load指令之间的数据相关使得关键路径的形成包括了存储、加载、增加数据。顺序执行这三个操作一共需要7个时钟周期。</p>
+<p>这两个例子说明，内存操作的实现包括许多细微之处。对于寄存器操作，在指令被译码成操作的时候，处理器就可以确定哪些指令会影响其他哪些指令。另一方面，对于内存操作，只有到计算出加载和存储的地址被计算出来以后，处理器才能确定哪些指令会影响其他的哪些。高效地处理内存操作对许多程序的性能来说至关重要。内存子系统使用了很多优化，例如当操作可以独立地进行时，就利用这种潜在的并行性。</p>
+<h2 id="513-应用性能提高技术">5.13 应用：性能提高技术</h2>
+<p>优化程序性能的基本策略：</p>
+<ol>
+<li>高级设计。合适的算法和数据结构</li>
+<li>基本编码原则。
+<ol>
+<li>消除连续的函数调用</li>
+<li>消除不必要的内存引用</li>
+</ol>
+</li>
+<li>低级优化。结构化代码以利用硬件功能。
+<ol>
+<li>展开循环，降低开销</li>
+<li>找到方法提高指令级并行</li>
+<li>用功能性的风格重写条件操作，使得编译采用条件传送。</li>
+</ol>
+</li>
+</ol>
+<h2 id="514-确认和消除性能瓶颈">5.14 确认和消除性能瓶颈</h2>
+<p>本节描述如何使用<strong>代码剖析程序(code prifiler)</strong>，优化大型程序。</p>
+<h3 id="5141-程序剖析">5.14.1 程序剖析</h3>
+<p>程序剖析(profiling)运行程序的一个版本，其中插入了工具代码，以确定程序的各个部分需要多少时间。</p>
+<p>Unix系统提供了一个剖析程序GPROF。这个程序产生两种形式的信息。首先，它确定程序中每个函数花费了多少CPU时间。其次，它计算每个函数被调用的次数，以执行调用的函数来分类。</p>
+<p>GPROF使用方法略。</p>
+<h3 id="5142-使用剖析程序来知道优化">5.14.2 使用剖析程序来知道优化</h3>
+<p>略。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-02-01</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/csapp_chapter5/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://yrc0d3.github.io/csapp_chapter5/" data-title="[CSAPP]第五章 优化程序性能" data-hashtags="caspp"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://yrc0d3.github.io/csapp_chapter5/" data-hashtag="caspp"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 WhatsApp" data-sharer="whatsapp" data-url="https://yrc0d3.github.io/csapp_chapter5/" data-title="[CSAPP]第五章 优化程序性能" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://yrc0d3.github.io/csapp_chapter5/" data-title="[CSAPP]第五章 优化程序性能"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://yrc0d3.github.io/csapp_chapter5/" data-title="[CSAPP]第五章 优化程序性能"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Myspace" data-sharer="myspace" data-url="https://yrc0d3.github.io/csapp_chapter5/" data-title="[CSAPP]第五章 优化程序性能" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="分享到 Blogger" data-sharer="blogger" data-url="https://yrc0d3.github.io/csapp_chapter5/" data-title="[CSAPP]第五章 优化程序性能" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Evernote" data-sharer="evernote" data-url="https://yrc0d3.github.io/csapp_chapter5/" data-title="[CSAPP]第五章 优化程序性能"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/caspp/">caspp</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/csapp_chapter4/" class="prev" rel="prev" title="[CSAPP]第四章 处理器体系结构"><i class="fas fa-angle-left fa-fw"></i>[CSAPP]第四章 处理器体系结构</a>
+            <a href="/csapp_chapter6/" class="next" rel="next" title="[CSAPP]第六章 存储器层次结构">[CSAPP]第六章 存储器层次结构<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.71.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

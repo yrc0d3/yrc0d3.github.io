@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>编程语言 - 分类 - my blog</title>
+        <link>https://yrc0d3.github.io/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</link>
+        <description>编程语言 - 分类 - my blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sun, 24 May 2020 23:18:42 &#43;0800</lastBuildDate><atom:link href="https://yrc0d3.github.io/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" rel="self" type="application/rss+xml" /><item>
+    <title>聊聊Golang中的字符串</title>
+    <link>https://yrc0d3.github.io/golang_string/</link>
+    <pubDate>Sun, 24 May 2020 23:18:42 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/golang_string/</guid>
+    <description><![CDATA[引言 笔者最近开发了一个服务，功能是缓存股票k线数据，减少redis的压力。每一根k线对应redis里的一个用|分隔的字符串，如&quot;2]]></description>
+</item></channel>
+</rss>

@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>聊聊Golang中的字符串 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="聊聊Golang中的字符串" />
+<meta property="og:description" content="引言 笔者最近开发了一个服务，功能是缓存股票k线数据，减少redis的压力。每一根k线对应redis里的一个用|分隔的字符串，如&quot;2" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yrc0d3.github.io/golang_string/" />
+<meta property="og:image" content="https://yrc0d3.github.io/logo.png"/>
+<meta property="article:published_time" content="2020-05-24T23:18:42+08:00" />
+<meta property="article:modified_time" content="2020-05-24T23:18:42+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://yrc0d3.github.io/logo.png"/>
+
+<meta name="twitter:title" content="聊聊Golang中的字符串"/>
+<meta name="twitter:description" content="引言 笔者最近开发了一个服务，功能是缓存股票k线数据，减少redis的压力。每一根k线对应redis里的一个用|分隔的字符串，如&quot;2"/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/golang_string/" /><link rel="prev" href="https://yrc0d3.github.io/csapp_chapter7/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "聊聊Golang中的字符串",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/yrc0d3.github.io\/golang_string\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/yrc0d3.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","keywords": "golang","wordcount":  5864 ,
+        "url": "https:\/\/yrc0d3.github.io\/golang_string\/","datePublished": "2020-05-24T23:18:42+08:00","dateModified": "2020-05-24T23:18:42+08:00","publisher": {
+                "@type": "Organization",
+                "name": "xxxx",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/yrc0d3.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yrc0d3"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="my blog"></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts"> 文章 </a><a class="menu-item" href="/tags"> 标签 </a><a class="menu-item" href="/categories"> 分类 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="my blog"></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts" title="">文章</a><a class="menu-item" href="/tags" title="">标签</a><a class="menu-item" href="/categories" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">聊聊Golang中的字符串</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"><i class="far fa-folder fa-fw"></i>编程语言</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-05-24">2020-05-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5864 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#引言">引言</a></li>
+    <li><a href="#数据结构">数据结构</a></li>
+    <li><a href="#stringunicodeutf8rune">string、unicode、utf8、rune</a></li>
+    <li><a href="#类型转换">类型转换</a></li>
+    <li><a href="#拼接">拼接</a>
+      <ul>
+        <li><a href="#heading">+</a></li>
+        <li><a href="#fmtsprintf">fmt.Sprintf</a></li>
+        <li><a href="#bytesbuffer">bytes.Buffer</a></li>
+        <li><a href="#stringsbuilder">strings.Builder</a></li>
+        <li><a href="#stringsjoin">strings.Join</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#遍历">遍历</a></li>
+    <li><a href="#字符串比较">字符串比较</a></li>
+    <li><a href="#使用字符串内部化来优化空间占用">使用字符串内部化来优化空间占用</a></li>
+    <li><a href="#结语">结语</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="引言">引言</h2>
+<p>笔者最近开发了一个服务，功能是缓存股票k线数据，减少redis的压力。每一根k线对应redis里的一个用<code>|</code>分隔的字符串，如<code>&quot;2020-02-19|186.72|188.06|188.18|186.47|187.28|29997471|5618676305.65|0|0.39|0.80|&quot;</code>。从redis里拿到字符串之后，对其进行分割，然后转换成结构体，放在内存里作为缓存。rpc接口直接拿内存里的数据返回就可以了。</p>
+<p>在测试的过程中，发现了一个奇怪的现象，那就是通过pprof查看内存占用时， 发现除了内存中的结构体区域之外，还有一块大小相近的字符串内存区域。</p>
+<p>为了彻底搞清楚以上现象的原因，笔者认为有必要深入了解一下golang中的字符串，因此有了本文。</p>
+<h2 id="数据结构">数据结构</h2>
+<p>先来看一下string在运行时的结构，其定义在文件<code>src/reflect/value.go</code>中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">
+type StringHeader struct {
+
+    Data uintptr
+
+    Len int
+
+}
+
+</code></pre></td></tr></table>
+</div>
+</div><p>对比一下slice的结构，可以发现它们非常相似。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">
+type SliceHeader struct {
+
+    Data uintptr
+
+    Len int
+
+    Cap int
+
+}
+
+</code></pre></td></tr></table>
+</div>
+</div><p>string比slice少了一个<code>Cap</code>字段，因为string是只读的。</p>
+<p><code>Data</code>字段是个指针，指向底层的字节序列。</p>
+<p>当对字符串类型使用赋值操作时，目标字符串和源字符串会共享底层的字节序列。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">s1 := &#34;hello world&#34;
+s2 := s1
+s3 := s1[:5]
+x1 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s1))
+x2 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s2))
+x3 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s3))
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的代码中，<code>&amp;s1</code>和<code>&amp;s2</code>是不相等的，但是<code>x1.Data</code>和<code>x2.Data</code>是相等的。当我们使用语法<code>aString[start:end]</code>来获取子串的时候，也会共享底层的字节序列，因此<code>x1.Data</code>和<code>x3.Data</code>是相等的。</p>
+<h2 id="stringunicodeutf8rune">string、unicode、utf8、rune</h2>
+<p>要深入了解golang中的字符串，绕不开这几个概念。下面依次介绍一下。</p>
+<p><strong>unicode</strong>是一套业界标准，它包括「字符集」和「编码方案」等内容。它为每一个「字符」定义唯一的代码，这个唯一的代码叫做<strong>code point</strong>。</p>
+<p>下面来举例。英文字母<code>a</code>的code point是<code>U+0061</code>，中文<code>好</code>的code point是<code>U+597D</code>。unicode还支持组合字符(combining character)，通过多个code point来组成一个组合字符，比如<code>é</code>可以由<code>U+0065</code>(e)和<code>U+0301</code>(´)这两个code point组合来表示。同时，为了兼容性，unicode里还有一些预组合字符(precomposed character)，比如<code>é</code>有单独的code point<code>U+00E9</code>。</p>
+<p>unicode定义的code point的范围从<code>U+0000</code>到<code>U+10FFFF</code>，对应的编码方案有多种，包括UTF-8、UTF-16、UTF-32等。UTF-8使用1~4个字节来编码一个code point。</p>
+<p>下面来举例。英文字母<code>a</code>的code point是<code>U+0061</code>，UTF-8编码为<code>0x61</code>。中文<code>好</code>的code point是<code>U+597D</code>，UTF-8编码为<code>0xE5A5BD</code>。</p>
+<p>下面来聊聊golang中的string、byte、string literal、rune这几个概念。</p>
+<p><strong>byte</strong>对于我们开发人员来说是最熟悉不过的了，1 byte=8 bits。golang中的byte是uint8的别名。</p>
+<p><strong>string</strong>是只读的slice of bytes，可以包含任意的字节，并不要求必须是UTF-8格式的。</p>
+<p><strong>string literal</strong>中文名是字符串字面量。golang中的string literal是那些直接写在源代码中的字符串，也就是源代码中通过双引号或者反引号定义的字符串。因为golang的源代码都是UTF-8的，所以golang中的字符串字面量基本上都是UTF-8的，比如<code>&quot;abc&quot;</code>这种常规的字符串字面量。像<code>&quot;\xbd\xb2&quot;</code>这种使用<code>\xNN</code>格式、故意写成非UTF8编码的字面量，也是合法的字符串字面量。</p>
+<p><strong>rune</strong>是golang中对code point的简称，也是int32的别名。</p>
+<h2 id="类型转换">类型转换</h2>
+<p>string和[]byte之间能够进行显式的类型转换。</p>
+<p>string和[]rune之间也能够进行显式的类型转换。</p>
+<p>来看下面这个示例程序</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+    <span class="nx">s</span> <span class="o">:=</span> <span class="s">&#34;Hello, 世界&#34;</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">)))</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">rune</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">([]</span><span class="nb">rune</span><span class="p">(</span><span class="nx">s</span><span class="p">)))</span>
+
+<span class="p">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>它的结果如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">
+Hello, 世界
+
+[72 101 108 108 111 44 32 228 184 150 231 149 140]
+
+Hello, 世界
+
+[72 101 108 108 111 44 32 19990 30028]
+
+Hello, 世界
+
+</code></pre></td></tr></table>
+</div>
+</div><p>需要注意的是，以上的类型转换都会发生内存拷贝。因此在高并发场景下，使用这些强制类型转换，性能上会比较差。</p>
+<ul>
+<li>
+<p><code>[]byte-&gt;string</code>调用了<code>runtime.slicebytetostring</code></p>
+</li>
+<li>
+<p><code>string-&gt;[]byte</code>调用了<code>runtime.stringtoslicebyte</code></p>
+</li>
+<li>
+<p><code>[]rune-&gt;string</code>调用了<code>runtime.slicerunetostring</code></p>
+</li>
+<li>
+<p><code>string-&gt;[]rune</code>调用了<code>runtime.stringtoslicerune</code></p>
+</li>
+</ul>
+<p>有兴趣的同学可以去看看源码，一般来说我们知道这种转换会发生内存拷贝就够了。</p>
+<p>另外，在某些场景下，编译器对string和byte slice之间的转换做了优化，不会发生拷贝，比如在for-range loop中将string转换成byte slice(<code>for i, b := range []byte(s) {}</code>)。</p>
+<h2 id="拼接">拼接</h2>
+<p>golang中拼接字符串的方式有很多种，相关的文章也很多。各种拼接方式的性能会受待拼接字符串的长度和数量影响，要全面测试比较困难。这里主要介绍各种拼接方式的实现原理，因此只针对拼接10个、10000个短字符串进行了性能测试。</p>
+<p>benchmark测试代码在这个<a href="https://gist.github.com/yrc0d3/6964e81b861efc23754cba5a38859e1b" target="_blank" rel="noopener noreffer">gist</a>中。笔者在自己的笔记本（2.5 GHz Intel Core i7）上测试了一下，结果如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">BenchmarkJoin10-4                                9577982               125 ns/op             112 B/op          1 allocs/op
+BenchmarkSprintf10-4                             4068709               297 ns/op             112 B/op          1 allocs/op
+BenchmarkConcat10-4                              2534871               482 ns/op             608 B/op          9 allocs/op
+BenchmarkBytesBuffer10-4                         4680453               255 ns/op             320 B/op          3 allocs/op
+BenchmarkBytesBufferWithGrow10-4                 5702677               218 ns/op             224 B/op          2 allocs/op
+BenchmarkStringBuilder10-4                       6260330               193 ns/op             240 B/op          4 allocs/op
+BenchmarkStringBuilderWithGrow10-4              13437114              86.7 ns/op             112 B/op          1 allocs/op
+BenchmarkJoin10000-4                               10000            109380 ns/op          106693 B/op          1 allocs/op
+BenchmarkSprintf10000-4                             3282            335898 ns/op          629595 B/op         25 allocs/op
+BenchmarkConcat10000-4                                16          68492777 ns/op        531099348 B/op     10015 allocs/op
+BenchmarkBytesBuffer10000-4                         8527            143114 ns/op          423706 B/op         13 allocs/op
+BenchmarkBytesBufferWithGrow10000-4                10000            101874 ns/op          213143 B/op          2 allocs/op
+BenchmarkStringBuilder10000-4                       8168            133852 ns/op          522409 B/op         23 allocs/op
+BenchmarkStringBuilderWithGrow10000-4              19359             60950 ns/op          106591 B/op          1 allocs/op
+</code></pre></td></tr></table>
+</div>
+</div><p>（PS：如果选取的测试字符串太短的话，有可能会被golang优化到没有内存分配。上面的测试选择的字符串长度适中，能够避开golang对短字符串拼接的优化。）</p>
+<p>从中我们可以看出，Join、BytesBufferWithGrow和StringBuilderWithGrow是性能最好的，耗时短且内存分配少。下面逐个分析一下。</p>
+<h3 id="heading">+</h3>
+<p>拼接字符串最简单的方式就是使用<code>+</code>。这也是我们的测试中性能最差的方式。</p>
+<p>通过<code>+</code>来进行字符串拼接，编译器会将原始代码转换成通过函数<code>cmd/compile/internal/gc.addstr</code>来生成拼接字符串的代码。这个函数帮助我们在编译期间选择合适的函数来拼接字符串，但最终都会调用函数<code>runtime.concatstrings</code>。这个函数中，一般都会先分配一块能够容纳所有待拼接字符串的内存空间，然后通过调用<code>copy</code>函数来组装最终的字符串。</p>
+<p>那么为什么这种拼接方式在测试中的表现最差呢？这是因为编译器转换代码是按语句来操作的。我们在for循环来使用<code>+</code>拼接所有字符串，因此对长度为n的字符串数组来说，要进行n次内存分配。因此性能差。</p>
+<p>在已知待拼接字符串数量的时候，将其代码写在一行，如<code>s := s1 + s2 + s3</code>，其性能是非常高的，因为只有一次内存分配。在这种场景下，语法简单，性能又好，推荐使用。</p>
+<h3 id="fmtsprintf">fmt.Sprintf</h3>
+<p>其源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func Sprintf(format string, a ...interface{}) string {
+	p := newPrinter()
+	p.doPrintf(format, a)
+	s := string(p.buf)
+	p.free()
+	return s
+}
+</code></pre></td></tr></table>
+</div>
+</div><p><code>fmt.Sprintf</code>的内部实现中，通过<code>newPrinter</code>函数创建了工具类<code>fmt.pp</code>(维护打印状态)，通过其<code>doPrintf</code>函数来完成字符串的拼接。<code>p.doPrintf</code>函数中的主要原理就是遍历<code>format</code>字符串，找到其中的<code>%</code>，然后根据后面的动词将对应的参数变量转换成字符串，然后继续遍历直到结束。</p>
+<p><code>p.doPrintf</code>函数内部最终是通过<code>p.buf.writeString</code>来拼接字符串。其代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Use simple []byte instead of bytes.Buffer to avoid large dependency.
+type buffer []byte
+
+func (b *buffer) writeString(s string) {
+	*b = append(*b, s...)
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>因此，其内存分配次数是取决于slice的grow策略的。</p>
+<h3 id="bytesbuffer">bytes.Buffer</h3>
+<p>bytes.Buffer会根据输入的数据长度来动态申请内存。其内部结构很简单，主要就是一个byte slice。其源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">type Buffer struct {
+	buf      []byte // contents are the bytes buf[off : len(buf)]
+	off      int    // read at &amp;buf[off], write at &amp;buf[len(buf)]
+	lastRead readOp // last read operation, so that Unread* can work correctly.
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>测试中的<code>BytesBufferWithGrow</code>和<code>BytesBuffer</code>唯一的区别就是<code>BytesBufferWithGrow</code>会提前调用<code>grow</code>函数分配足够长度的内存。通过其测试结果对比可以看出，此举能够提升性能。</p>
+<h3 id="stringsbuilder">strings.Builder</h3>
+<p><code>strings.Builder</code>是go在1.10版本中加入的，也是官方推荐的用于拼接字符串的结构。</p>
+<p>它的内部结构非常简单，基本就是一个byte slice。所有的操作都是基于这个byte slice。其源码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">type Builder struct {
+	addr *Builder // of receiver, to detect copies by value
+	buf  []byte
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>从测试结果中可以看出，虽然底层实现都是byte slice，但在提前使用<code>grow</code>函数申请内存的场景下，<code>strings.Builder</code>比<code>bytes.Buffer</code>要少了一次内存分配，性能也更好一些。原因在于我们最后都调用了它们的<code>String</code>方法来获取最终的字符串。<code>bytes.Buffer</code>的<code>String</code>方法会将byte slice强制转换成string，结合文章前面的内容我们知道，这一步是要进行内存拷贝的。而<code>strings.Builder</code>的<code>string</code>方法使用了<code>unsafe.Pointer</code>来将byte slice转换成string，避免了内存拷贝。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func (b *Buffer) String() string {
+	if b == nil {
+		// Special case, useful in debugging.
+		return &#34;&lt;nil&gt;&#34;
+	}
+	return string(b.buf[b.off:])
+}
+
+func (b *Builder) String() string {
+	return *(*string)(unsafe.Pointer(&amp;b.buf))
+}
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="stringsjoin">strings.Join</h3>
+<p>其内部实现使用了<code>strings.Builder</code>，并在开始就通过<code>Grow</code>函数预分配了待拼接字符串长度和的内存，因此性能很好。</p>
+<h3 id="总结">总结</h3>
+<p>通过以上分析，我们可以看出，影响字符串拼接性能的主要因素就是内存分配次数。无论使用哪种拼接方式，尽量减少内存分配次数，就能获取更好的性能。</p>
+<p>如果有拼接非字符串或者特殊格式化的需求，那么估计只能选择fmt系列函数。如果编译时能够确定待拼接字符串数量，那么在一行内使用<code>+</code>将其拼接起来是既方便又高效的。其他场景，使用<code>strings.Buider</code>一般都是最好的选择。</p>
+<h2 id="遍历">遍历</h2>
+<p>golang中遍历字符串，我们一般都会使用for-range loop。需要注意的是，使用for-range来遍历字符串时，我们拿到的值都是rune类型的变量，而不是byte。<code>for v1, v2 := range a {}</code>会在编译时转换成如下形式的代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">ha := a
+for hv1 := 0; hv1 &lt; len(ha); {
+    hv1t := hv1
+    hv2 := rune(ha[hv1])
+    if hv2 &lt; utf8.RuneSelf {
+       hv1++
+    } else {
+       hv2, hv1 = decoderune(ha, hv1)
+    }
+    v1, v2 = hv1t, hv2
+    // original body
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>当我们使用下标的方式来遍历字符串时，像<code>for i = 0; i &lt; len(s); i++ {}</code>，<code>s[i]</code>是byte类型的变量，这种情况就是把字符串当作是字节数组来使用了。</p>
+<h2 id="字符串比较">字符串比较</h2>
+<p>当我们使用<code>==</code>或者<code>!=</code>来比较两个字符串的时候，如果它们底层的字节序列地址相同，那么可以通过比较其长度来判断其是否相等，时间复杂度是<code>O(1)</code>。如果底层的字节序列地址不同，那么时间复杂度就是<code>O(n)</code>了。</p>
+<p>感兴趣的可以看一下<a href="https://github.com/golang/go/blob/9b189686a53d7fec7deb93d7521531157aa023cb/src/internal/bytealg/compare_amd64.s#L30" target="_blank" rel="noopener noreffer">汇编源码</a></p>
+<h2 id="使用字符串内部化来优化空间占用">使用字符串内部化来优化空间占用</h2>
+<p><strong>字符串内部化</strong>(string intern)是指一种让相同的字符串在内存中只保存一份的技术。对于要存储大量字符串的应用来说，它可以显著降低内存占用。</p>
+<p>通过前述分析，我们知道golang中的字符串结构体为<code>StringHeader</code>。其中的<code>Data</code>是一个指向底层字节序列的地址。两个字符串变量在内存中的地址虽然不同，但它们的底层字节序列的地址可以相同。</p>
+<p>golang对于在编译期间可以确定的字符串常量，会进行内部化处理。如果是运行期间产生的字符串，则无法内部化。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 可以被intern，底层字节序列地址相同
+s1 := &#34;12&#34;
+s2 := &#34;1&#34;+&#34;2&#34;
+
+// 不能被intern，底层字节序列地址不同
+s3 := &#34;12&#34;
+s4 := strconv.Itoa(12)
+</code></pre></td></tr></table>
+</div>
+</div><p>了解这些之后，我们可以想办法绕过限制，在运行时手动完成字符串内部化。一个简单的实现如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;reflect&#34;</span>
+	<span class="s">&#34;strconv&#34;</span>
+	<span class="s">&#34;unsafe&#34;</span>
+<span class="p">)</span>
+
+<span class="c1">// stringptr returns a pointer to the string data.
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">stringptr</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">uintptr</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">StringHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">)).</span><span class="nx">Data</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">stringInterner</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">si</span> <span class="nx">stringInterner</span><span class="p">)</span> <span class="nf">Intern</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">interned</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">[</span><span class="nx">s</span><span class="p">];</span> <span class="nx">ok</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">interned</span>
+	<span class="p">}</span>
+	<span class="nx">si</span><span class="p">[</span><span class="nx">s</span><span class="p">]</span> <span class="p">=</span> <span class="nx">s</span>
+	<span class="k">return</span> <span class="nx">s</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">si</span> <span class="o">:=</span> <span class="nx">stringInterner</span><span class="p">{}</span>
+	<span class="nx">s1</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">.</span><span class="nf">Intern</span><span class="p">(</span><span class="s">&#34;12&#34;</span><span class="p">)</span>
+	<span class="nx">s2</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">.</span><span class="nf">Intern</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nf">stringptr</span><span class="p">(</span><span class="nx">s1</span><span class="p">)</span> <span class="o">==</span> <span class="nf">stringptr</span><span class="p">(</span><span class="nx">s2</span><span class="p">))</span> <span class="c1">// true
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其原理很简单，就是自己维护一个字符串的池子，在程序中只使用池子中的字符串。在缓存类的应用中，使用该技术可以节省很多内存空间。</p>
+<p>golang在net包中也使用了该技术：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// commonHeader interns common header strings.
+var commonHeader map[string]string
+
+var commonHeaderOnce sync.Once
+
+func initCommonHeader() {
+	commonHeader = make(map[string]string)
+	for _, v := range []string{
+		&#34;Accept&#34;,
+		&#34;Accept-Charset&#34;,
+		&#34;Accept-Encoding&#34;,
+		// ...
+	} {
+		commonHeader[v] = v
+	}
+}
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="结语">结语</h2>
+<p>结合以上内容，就可以解决文章开头遇到的问题。在将redis中的k线字符串转换为结构体的时候，结构体引用了字符串split之后的第一个表示日期的子串，因此导致原始字符串的底层的字节序列未被回收，一直驻留在内存中。使用字符串内部化技术，可以很简单的解决问题，同时减少内存占用。</p>
+<p>以文章开头的字符串<code>&quot;2020-02-19|186.72|188.06|188.18|186.47|187.28|29997471|5618676305.65|0|0.39|0.80|&quot;</code>为例。通过阅读<code>strings.Split</code>的源码可知，它是通过设置offset，复用底层字节数组来生成的子字符串。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func Split(s, sep string) []string { return genSplit(s, sep, 0, -1) }
+
+func genSplit(s, sep string, sepSave, n int) []string {
+	if n == 0 {
+		return nil
+	}
+	if sep == &#34;&#34; {
+		return explode(s, n)
+	}
+	if n &lt; 0 {
+		n = Count(s, sep) + 1
+	}
+
+	a := make([]string, n)
+	n--
+	i := 0
+	for i &lt; n {
+		m := Index(s, sep)
+		if m &lt; 0 {
+			break
+		}
+		a[i] = s[:m+sepSave]
+		s = s[m+len(sep):]
+		i++
+	}
+	a[i] = s
+	return a[:i+1]
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>在<code>strings.Split</code>之后，我们能够获取一个字符串数组，暂命名其为<code>kFields</code>。然后将<code>kFields</code>的各个值分别赋给结构体的各个字段。<code>kFields[0]</code>是日期，仍然被保留为string类型。其他字段都需要进行到数字的转换。因此，只有<code>kFields[0]</code>一直被引用着，也就导致原始字符串的底层字节序列一直被引用，无法被垃圾回收，也就一直占用着内存。通过内部化技术解除对<code>kFields[0]</code>的引用之后，原始字符串的底层字节序列也可以被回收掉了，内存占用也就降下来了。</p>
+<p>以上就是笔者通过实际问题，逐渐深入内部原理，然后对golang中字符串的相关内容进行的梳理。如有错误之处，敬请指正。</p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>
+<p><a href="https://blog.golang.org/strings" target="_blank" rel="noopener noreffer">Strings, bytes, runes and characters in Go</a></p>
+</li>
+<li>
+<p><a href="https://go101.org/article/basic-types-and-value-literals.html" target="_blank" rel="noopener noreffer">Basic Types and Basic Value Literals</a></p>
+</li>
+<li>
+<p><a href="https://go101.org/article/string.html" target="_blank" rel="noopener noreffer">Strings in Go</a></p>
+</li>
+<li>
+<p><a href="https://artem.krylysov.com/blog/2018/12/12/string-interning-in-go/" target="_blank" rel="noopener noreffer">String interning in Go</a></p>
+</li>
+<li>
+<p><a href="https://ms2008.github.io/2019/08/18/golang-string-interning/" target="_blank" rel="noopener noreffer">聊一聊字符串内部化</a></p>
+</li>
+<li>
+<p><a href="https://blog.thinkeridea.com/201902/go/string_ye_shi_yin_yong_lei_xing.html" target="_blank" rel="noopener noreffer">【Go】string 优化误区及建议</a></p>
+</li>
+<li>
+<p><a href="https://www.flysnow.org/2018/10/28/golang-concat-strings-performance-analysis.html" target="_blank" rel="noopener noreffer">Go语言字符串高效拼接</a></p>
+</li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-05-24</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/golang_string/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://yrc0d3.github.io/golang_string/" data-title="聊聊Golang中的字符串" data-hashtags="golang"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://yrc0d3.github.io/golang_string/" data-hashtag="golang"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 WhatsApp" data-sharer="whatsapp" data-url="https://yrc0d3.github.io/golang_string/" data-title="聊聊Golang中的字符串" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://yrc0d3.github.io/golang_string/" data-title="聊聊Golang中的字符串"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://yrc0d3.github.io/golang_string/" data-title="聊聊Golang中的字符串"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Myspace" data-sharer="myspace" data-url="https://yrc0d3.github.io/golang_string/" data-title="聊聊Golang中的字符串" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="分享到 Blogger" data-sharer="blogger" data-url="https://yrc0d3.github.io/golang_string/" data-title="聊聊Golang中的字符串" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Evernote" data-sharer="evernote" data-url="https://yrc0d3.github.io/golang_string/" data-title="聊聊Golang中的字符串"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/golang/">golang</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/csapp_chapter7/" class="prev" rel="prev" title="[CSAPP]第七章 链接"><i class="fas fa-angle-left fa-fw"></i>[CSAPP]第七章 链接</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.71.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
