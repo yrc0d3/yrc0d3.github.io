@@ -192,7 +192,7 @@ golang中拼接字符串的方式有很多种，相关的文章也很多。各�
 
 benchmark测试代码在这个[gist](https://gist.github.com/yrc0d3/6964e81b861efc23754cba5a38859e1b)中。
 
-{{< gist yrc0d3 spf136964e81b861efc23754cba5a38859e1b >}}
+{{< gist yrc0d3 136964e81b861efc23754cba5a38859e1b >}}
 
 笔者在自己的笔记本（2.5 GHz Intel Core i7）上测试了一下，结果如下：
 
