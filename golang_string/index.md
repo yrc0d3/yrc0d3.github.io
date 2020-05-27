@@ -190,11 +190,7 @@ Hello, 世界
 
 golang中拼接字符串的方式有很多种，相关的文章也很多。各种拼接方式的性能会受待拼接字符串的长度和数量影响，要全面测试比较困难。这里主要介绍各种拼接方式的实现原理，因此只针对拼接10个、10000个短字符串进行了性能测试。
 
-benchmark测试代码在这个[gist](https://gist.github.com/yrc0d3/6964e81b861efc23754cba5a38859e1b)中。
-
-{{< gist yrc0d3 136964e81b861efc23754cba5a38859e1b >}}
-
-笔者在自己的笔记本（2.5 GHz Intel Core i7）上测试了一下，结果如下：
+benchmark测试代码在这个[gist](https://gist.github.com/yrc0d3/6964e81b861efc23754cba5a38859e1b)中。笔者在自己的笔记本（2.5 GHz Intel Core i7）上测试了一下，结果如下：
 
 ```
 BenchmarkJoin10-4                                9577982               125 ns/op             112 B/op          1 allocs/op
