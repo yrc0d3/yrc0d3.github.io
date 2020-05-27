@@ -340,7 +340,10 @@ Hello, 世界
 <p>另外，在某些场景下，编译器对string和byte slice之间的转换做了优化，不会发生拷贝，比如在for-range loop中将string转换成byte slice(<code>for i, b := range []byte(s) {}</code>)。</p>
 <h2 id="拼接">拼接</h2>
 <p>golang中拼接字符串的方式有很多种，相关的文章也很多。各种拼接方式的性能会受待拼接字符串的长度和数量影响，要全面测试比较困难。这里主要介绍各种拼接方式的实现原理，因此只针对拼接10个、10000个短字符串进行了性能测试。</p>
-<p>benchmark测试代码在这个<a href="https://gist.github.com/yrc0d3/6964e81b861efc23754cba5a38859e1b" target="_blank" rel="noopener noreffer">gist</a>中。笔者在自己的笔记本（2.5 GHz Intel Core i7）上测试了一下，结果如下：</p>
+<p>benchmark测试代码在这个<a href="https://gist.github.com/yrc0d3/6964e81b861efc23754cba5a38859e1b" target="_blank" rel="noopener noreffer">gist</a>中。</p>
+<script type="application/javascript" src="https://gist.github.com/yrc0d3/spf136964e81b861efc23754cba5a38859e1b.js"></script>
+
+<p>笔者在自己的笔记本（2.5 GHz Intel Core i7）上测试了一下，结果如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
