@@ -8,10 +8,10 @@
         <title>聊聊Golang中的字符串 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="聊聊Golang中的字符串" />
 <meta property="og:description" content="引言 笔者最近开发了一个服务，功能是缓存股票k线数据，减少redis的压力。每一根k线对应redis里的一个用|分隔的字符串，如&quot;2" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://yrc0d3.github.io/golang_string/" />
-<meta property="og:image" content="https://yrc0d3.github.io/logo.png"/>
+<meta property="og:url" content="https://yrc0d3.github.io/golang_string/" /><meta property="og:image" content="https://yrc0d3.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-05-24T23:18:42+08:00" />
 <meta property="article:modified_time" content="2020-05-24T23:18:42+08:00" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://yrc0d3.github.io/logo.png"/>
 
@@ -20,7 +20,7 @@
 <meta name="application-name" content="LoveIt">
 <meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/golang_string/" /><link rel="prev" href="https://yrc0d3.github.io/csapp_chapter7/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/golang_string/" /><link rel="prev" href="https://yrc0d3.github.io/csapp_chapter7/" /><link rel="next" href="https://yrc0d3.github.io/csapp_chapter8/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -156,7 +156,7 @@
 <p>先来看一下string在运行时的结构，其定义在文件<code>src/reflect/value.go</code>中</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -167,7 +167,7 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">
 type StringHeader struct {
 
     Data uintptr
@@ -181,7 +181,7 @@ type StringHeader struct {
 </div><p>对比一下slice的结构，可以发现它们非常相似。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -194,7 +194,7 @@ type StringHeader struct {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">
 type SliceHeader struct {
 
     Data uintptr
@@ -212,7 +212,7 @@ type SliceHeader struct {
 <p>当对字符串类型使用赋值操作时，目标字符串和源字符串会共享底层的字节序列。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -220,7 +220,7 @@ type SliceHeader struct {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">s1 := &#34;hello world&#34;
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">s1 := &#34;hello world&#34;
 s2 := s1
 s3 := s1[:5]
 x1 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s1))
@@ -246,7 +246,7 @@ x3 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s3))
 <p>来看下面这个示例程序</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -269,7 +269,7 @@ x3 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s3))
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
 <span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
@@ -295,7 +295,7 @@ x3 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s3))
 </div><p>它的结果如下</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -308,7 +308,7 @@ x3 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s3))
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">
 Hello, 世界
 
 [72 101 108 108 111 44 32 228 184 150 231 149 140]
@@ -343,7 +343,7 @@ Hello, 世界
 <p>benchmark测试代码在这个<a href="https://gist.github.com/yrc0d3/6964e81b861efc23754cba5a38859e1b" target="_blank" rel="noopener noreffer">gist</a>中。笔者在自己的笔记本（2.5 GHz Intel Core i7）上测试了一下，结果如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -359,7 +359,7 @@ Hello, 世界
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">BenchmarkJoin10-4                                9577982               125 ns/op             112 B/op          1 allocs/op
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">BenchmarkJoin10-4                                9577982               125 ns/op             112 B/op          1 allocs/op
 BenchmarkSprintf10-4                             4068709               297 ns/op             112 B/op          1 allocs/op
 BenchmarkConcat10-4                              2534871               482 ns/op             608 B/op          9 allocs/op
 BenchmarkBytesBuffer10-4                         4680453               255 ns/op             320 B/op          3 allocs/op
@@ -386,7 +386,7 @@ BenchmarkStringBuilderWithGrow10000-4              19359             60950 ns/op
 <p>其源码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -395,7 +395,7 @@ BenchmarkStringBuilderWithGrow10000-4              19359             60950 ns/op
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">func Sprintf(format string, a ...interface{}) string {
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">func Sprintf(format string, a ...interface{}) string {
 	p := newPrinter()
 	p.doPrintf(format, a)
 	s := string(p.buf)
@@ -408,7 +408,7 @@ BenchmarkStringBuilderWithGrow10000-4              19359             60950 ns/op
 <p><code>p.doPrintf</code>函数内部最终是通过<code>p.buf.writeString</code>来拼接字符串。其代码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -416,7 +416,7 @@ BenchmarkStringBuilderWithGrow10000-4              19359             60950 ns/op
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Use simple []byte instead of bytes.Buffer to avoid large dependency.
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// Use simple []byte instead of bytes.Buffer to avoid large dependency.
 type buffer []byte
 
 func (b *buffer) writeString(s string) {
@@ -429,14 +429,14 @@ func (b *buffer) writeString(s string) {
 <p>bytes.Buffer会根据输入的数据长度来动态申请内存。其内部结构很简单，主要就是一个byte slice。其源码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">type Buffer struct {
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">type Buffer struct {
 	buf      []byte // contents are the bytes buf[off : len(buf)]
 	off      int    // read at &amp;buf[off], write at &amp;buf[len(buf)]
 	lastRead readOp // last read operation, so that Unread* can work correctly.
@@ -449,13 +449,13 @@ func (b *buffer) writeString(s string) {
 <p>它的内部结构非常简单，基本就是一个byte slice。所有的操作都是基于这个byte slice。其源码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">type Builder struct {
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">type Builder struct {
 	addr *Builder // of receiver, to detect copies by value
 	buf  []byte
 }
@@ -464,7 +464,7 @@ func (b *buffer) writeString(s string) {
 </div><p>从测试结果中可以看出，虽然底层实现都是byte slice，但在提前使用<code>grow</code>函数申请内存的场景下，<code>strings.Builder</code>比<code>bytes.Buffer</code>要少了一次内存分配，性能也更好一些。原因在于我们最后都调用了它们的<code>String</code>方法来获取最终的字符串。<code>bytes.Buffer</code>的<code>String</code>方法会将byte slice强制转换成string，结合文章前面的内容我们知道，这一步是要进行内存拷贝的。而<code>strings.Builder</code>的<code>string</code>方法使用了<code>unsafe.Pointer</code>来将byte slice转换成string，避免了内存拷贝。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -477,7 +477,7 @@ func (b *buffer) writeString(s string) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">func (b *Buffer) String() string {
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">func (b *Buffer) String() string {
 	if b == nil {
 		// Special case, useful in debugging.
 		return &#34;&lt;nil&gt;&#34;
@@ -499,7 +499,7 @@ func (b *Builder) String() string {
 <p>golang中遍历字符串，我们一般都会使用for-range loop。需要注意的是，使用for-range来遍历字符串时，我们拿到的值都是rune类型的变量，而不是byte。<code>for v1, v2 := range a {}</code>会在编译时转换成如下形式的代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -513,7 +513,7 @@ func (b *Builder) String() string {
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">ha := a
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">ha := a
 for hv1 := 0; hv1 &lt; len(ha); {
     hv1t := hv1
     hv2 := rune(ha[hv1])
@@ -537,7 +537,7 @@ for hv1 := 0; hv1 &lt; len(ha); {
 <p>golang对于在编译期间可以确定的字符串常量，会进行内部化处理。如果是运行期间产生的字符串，则无法内部化。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -546,7 +546,7 @@ for hv1 := 0; hv1 &lt; len(ha); {
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 可以被intern，底层字节序列地址相同
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// 可以被intern，底层字节序列地址相同
 s1 := &#34;12&#34;
 s2 := &#34;1&#34;+&#34;2&#34;
 
@@ -558,7 +558,7 @@ s4 := strconv.Itoa(12)
 </div><p>了解这些之后，我们可以想办法绕过限制，在运行时手动完成字符串内部化。一个简单的实现如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -590,7 +590,7 @@ s4 := strconv.Itoa(12)
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
 	<span class="s">&#34;fmt&#34;</span>
@@ -626,7 +626,7 @@ s4 := strconv.Itoa(12)
 <p>golang在net包中也使用了该技术：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -644,7 +644,7 @@ s4 := strconv.Itoa(12)
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// commonHeader interns common header strings.
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// commonHeader interns common header strings.
 var commonHeader map[string]string
 
 var commonHeaderOnce sync.Once
@@ -667,7 +667,7 @@ func initCommonHeader() {
 <p>以文章开头的字符串<code>&quot;2020-02-19|186.72|188.06|188.18|186.47|187.28|29997471|5618676305.65|0|0.39|0.80|&quot;</code>为例。通过阅读<code>strings.Split</code>的源码可知，它是通过设置offset，复用底层字节数组来生成的子字符串。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -697,7 +697,7 @@ func initCommonHeader() {
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">func Split(s, sep string) []string { return genSplit(s, sep, 0, -1) }
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">func Split(s, sep string) []string { return genSplit(s, sep, 0, -1) }
 
 func genSplit(s, sep string, sepSave, n int) []string {
 	if n == 0 {
@@ -778,12 +778,13 @@ func genSplit(s, sep string, sepSave, n int) []string {
         </section>
     </div>
 
-    <div class="post-nav"><a href="/csapp_chapter7/" class="prev" rel="prev" title="[CSAPP]第七章 链接"><i class="fas fa-angle-left fa-fw"></i>[CSAPP]第七章 链接</a></div>
+    <div class="post-nav"><a href="/csapp_chapter7/" class="prev" rel="prev" title="[CSAPP]第七章 链接"><i class="fas fa-angle-left fa-fw"></i>[CSAPP]第七章 链接</a>
+            <a href="/csapp_chapter8/" class="next" rel="next" title="[CSAPP]第八章 异常控制流">[CSAPP]第八章 异常控制流<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.71.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 

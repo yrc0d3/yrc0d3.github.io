@@ -8,10 +8,10 @@
         <title>[CSAPP]第四章 处理器体系结构 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="[CSAPP]第四章 处理器体系结构" />
 <meta property="og:description" content="一个处理器支持的指令和指令的字节级编码称为它的指令集体系结构(Instruction-Set Architecture, ISA)。 本章首先定义一个简单的指令集，作为我" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://yrc0d3.github.io/csapp_chapter4/" />
-<meta property="og:image" content="https://yrc0d3.github.io/logo.png"/>
+<meta property="og:url" content="https://yrc0d3.github.io/csapp_chapter4/" /><meta property="og:image" content="https://yrc0d3.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2019-12-29T23:38:09+08:00" />
 <meta property="article:modified_time" content="2019-12-29T23:38:09+08:00" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://yrc0d3.github.io/logo.png"/>
 
@@ -34,7 +34,7 @@
                 "url": "https:\/\/yrc0d3.github.io\/cover.png",
                 "width":  800 ,
                 "height":  600 
-            },"genre": "posts","keywords": "caspp","wordcount":  8015 ,
+            },"genre": "posts","keywords": "caspp","wordcount":  8013 ,
         "url": "https:\/\/yrc0d3.github.io\/csapp_chapter4\/","datePublished": "2019-12-29T23:38:09+08:00","dateModified": "2019-12-29T23:38:09+08:00","publisher": {
                 "@type": "Organization",
                 "name": "xxxx",
@@ -118,7 +118,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[CSAPP]第四章 处理器体系结构</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>读书笔记</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-12-29">2019-12-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8015 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-12-29">2019-12-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 8013 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 16 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -249,7 +249,7 @@
 <h3 id="415-y86-64程序">4.1.5 Y86-64程序</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -261,7 +261,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">long sum(long *start, long count)
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">long sum(long *start, long count)
 {
     long sum = 0;
     while (count) {
@@ -317,7 +317,7 @@
         data-sizes="auto"
         alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_4_10_bit_equality.png"
         title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_4_10_bit_equality.png" /></p>
-<p>图4-11是多路复用器(multiplexor，通常称为&quot;MUX&rdquo;)，它根据输入控制信号的值，从一组不同的数据信号中选出一个。HCL表达式为<code>bool out = (s &amp;&amp; a) || (!s &amp;&amp; b)</code></p>
+<p>图4-11是多路复用器(multiplexor，通常称为&quot;MUX&quot;)，它根据输入控制信号的值，从一组不同的数据信号中选出一个。HCL表达式为<code>bool out = (s &amp;&amp; a) || (!s &amp;&amp; b)</code></p>
 <p><img
         class="lazyload"
         src="/svg/loading/small.min.svg"
@@ -577,7 +577,7 @@
 <p>为了唯一标识信号值，我们采用这样的命名机制：通过在信号名前面加上大写字母的流水线寄存器名字作为前缀，来唯一标识存储在流水线寄存器中的信号；通过在信号名前面加上小写字母的阶段名的第一个字母作为前缀，来唯一标识某个阶段内刚刚计算出来的信号。</p>
 <blockquote>
 <p>信号M_stat和m_stat的区别：
-在命名系统中，大写的前缀&quot;D&rdquo;、&ldquo;E&rdquo;、&ldquo;M&rdquo;、&ldquo;W&quot;指的是流水线寄存器，所以M_stat指的是流水线寄存器M的状态码字段。小写的前缀&quot;f&rdquo;、&ldquo;d&rdquo;、&ldquo;e&rdquo;、&ldquo;m&rdquo;、&ldquo;w&quot;指的是流水线阶段，所以m_stat指的是在访存阶段中由控制逻辑产生出的信号状态。</p>
+在命名系统中，大写的前缀&quot;D&quot;、&ldquo;E&rdquo;、&ldquo;M&rdquo;、&ldquo;W&quot;指的是流水线寄存器，所以M_stat指的是流水线寄存器M的状态码字段。小写的前缀&quot;f&rdquo;、&ldquo;d&rdquo;、&ldquo;e&rdquo;、&ldquo;m&rdquo;、&ldquo;w&quot;指的是流水线阶段，所以m_stat指的是在访存阶段中由控制逻辑产生出的信号状态。</p>
 </blockquote>
 <h3 id="454-预测下一个pc">4.5.4 预测下一个PC</h3>
 <p>除了条件转移指令和ret以外，根据取指阶段中计算出的信息，我们能够确定下一条指令的地址。对于call和jump来说，下一条指令的地址是指令中的常数字valC，而对于其他指令来说就valP。因此，通过预测PC的下一个值，在大多数情况下，我们能够达到每个时钟周期发射一条新指令的目的。</p>
@@ -698,10 +698,10 @@
 <p>如果忽略异常带来的性能损失，可以使用下面的方法来大致计算CPI：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">CPI = 1.0 + lp + mp + rp
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">CPI = 1.0 + lp + mp + rp
 </code></pre></td></tr></table>
 </div>
 </div><p>其中，lp(load penalty)，mp(mispredicted branch penalty)，rp(return penalty)分别为那三种情况插入气泡的平均数。</p>
@@ -754,8 +754,8 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.71.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 

@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>[CSAPP]第九章 虚拟内存 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="[CSAPP]第九章 虚拟内存" />
+<meta property="og:description" content="9.1 物理和虚拟寻址 图9-1展示了一个物理寻址（physical addressing）的示例。 图9-2展示了现代处理器使用的一种称为虚拟寻址（v" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yrc0d3.github.io/csapp_chapter9/" /><meta property="og:image" content="https://yrc0d3.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-01-04T22:27:22+08:00" />
+<meta property="article:modified_time" content="2021-01-04T22:27:22+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://yrc0d3.github.io/logo.png"/>
+
+<meta name="twitter:title" content="[CSAPP]第九章 虚拟内存"/>
+<meta name="twitter:description" content="9.1 物理和虚拟寻址 图9-1展示了一个物理寻址（physical addressing）的示例。 图9-2展示了现代处理器使用的一种称为虚拟寻址（v"/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/csapp_chapter9/" /><link rel="prev" href="https://yrc0d3.github.io/csapp_chapter8/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "[CSAPP]第九章 虚拟内存",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/yrc0d3.github.io\/csapp_chapter9\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/yrc0d3.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","keywords": "caspp","wordcount":  10556 ,
+        "url": "https:\/\/yrc0d3.github.io\/csapp_chapter9\/","datePublished": "2021-01-04T22:27:22+08:00","dateModified": "2021-01-04T22:27:22+08:00","publisher": {
+                "@type": "Organization",
+                "name": "xxxx",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/yrc0d3.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yrc0d3"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="my blog"></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts"> 文章 </a><a class="menu-item" href="/tags"> 标签 </a><a class="menu-item" href="/categories"> 分类 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="my blog"></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts" title="">文章</a><a class="menu-item" href="/tags" title="">标签</a><a class="menu-item" href="/categories" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">[CSAPP]第九章 虚拟内存</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>读书笔记</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-01-04">2021-01-04</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 10556 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 22 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#91-物理和虚拟寻址">9.1 物理和虚拟寻址</a></li>
+    <li><a href="#92-地址空间">9.2 地址空间</a></li>
+    <li><a href="#93-虚拟内存作为缓存的工具">9.3 虚拟内存作为缓存的工具</a>
+      <ul>
+        <li><a href="#931-dram缓存的组织结构">9.3.1 DRAM缓存的组织结构</a></li>
+        <li><a href="#932-页表">9.3.2 页表</a></li>
+        <li><a href="#933-页命中">9.3.3 页命中</a></li>
+        <li><a href="#934-缺页">9.3.4 缺页</a></li>
+        <li><a href="#935-分配页面">9.3.5 分配页面</a></li>
+        <li><a href="#936-又是局部性救了我们">9.3.6 又是局部性救了我们</a></li>
+      </ul>
+    </li>
+    <li><a href="#94-虚拟内存作为内存管理的工具">9.4 虚拟内存作为内存管理的工具</a></li>
+    <li><a href="#95-虚拟内存作为内存保护的工具">9.5 虚拟内存作为内存保护的工具</a></li>
+    <li><a href="#96-地址翻译">9.6 地址翻译</a>
+      <ul>
+        <li><a href="#961-结合高速缓存和虚拟内存">9.6.1 结合高速缓存和虚拟内存</a></li>
+        <li><a href="#962-利用tlb加速地址翻译">9.6.2 利用TLB加速地址翻译</a></li>
+        <li><a href="#963-多级页表">9.6.3 多级页表</a></li>
+        <li><a href="#964-综合端到端的地址翻译">9.6.4 综合：端到端的地址翻译</a></li>
+      </ul>
+    </li>
+    <li><a href="#97-案例研究intel-core-i7linux内存系统">9.7 案例研究：Intel Core i7/Linux内存系统</a>
+      <ul>
+        <li><a href="#971-core-i7地址翻译">9.7.1 Core i7地址翻译</a></li>
+        <li><a href="#972-linux虚拟内存系统">9.7.2 Linux虚拟内存系统</a>
+          <ul>
+            <li><a href="#1-linux虚拟内存区域">1. Linux虚拟内存区域</a></li>
+            <li><a href="#2-linux缺页异常处理">2. Linux缺页异常处理</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#98-内存映射">9.8 内存映射</a>
+      <ul>
+        <li><a href="#981-再看共享对象">9.8.1 再看共享对象</a></li>
+        <li><a href="#982再看fork函数">9.8.2再看fork函数</a></li>
+        <li><a href="#983-再看execve函数">9.8.3 再看execve函数</a></li>
+        <li><a href="#984-使用mmap函数的用户级内存映射">9.8.4 使用mmap函数的用户级内存映射</a></li>
+      </ul>
+    </li>
+    <li><a href="#99-动态内存分配">9.9 动态内存分配</a>
+      <ul>
+        <li><a href="#991-malloc和free函数">9.9.1 malloc和free函数</a></li>
+        <li><a href="#992-为什么要使用动态内存分配">9.9.2 为什么要使用动态内存分配</a></li>
+        <li><a href="#993-分配器的要求和目标">9.9.3 分配器的要求和目标</a></li>
+        <li><a href="#994-碎片">9.9.4 碎片</a></li>
+        <li><a href="#995-实现问题">9.9.5 实现问题</a></li>
+        <li><a href="#996-隐式空闲链表">9.9.6 隐式空闲链表</a></li>
+        <li><a href="#997-放置已分配的块">9.9.7 放置已分配的块</a></li>
+        <li><a href="#998-分割空闲块">9.9.8 分割空闲块</a></li>
+        <li><a href="#999-获取额外的堆内存">9.9.9 获取额外的堆内存</a></li>
+        <li><a href="#9910-合并空闲块">9.9.10 合并空闲块</a></li>
+        <li><a href="#9911-带边界标记的合并">9.9.11 带边界标记的合并</a></li>
+        <li><a href="#9912-综合实现一个简单的分配器">9.9.12 综合：实现一个简单的分配器</a></li>
+        <li><a href="#9913-显式空闲链表">9.9.13 显式空闲链表</a></li>
+        <li><a href="#9914-分离的空闲链表">9.9.14 分离的空闲链表</a>
+          <ul>
+            <li><a href="#1-简单分离存储">1. 简单分离存储</a></li>
+            <li><a href="#2-分离适配">2. 分离适配</a></li>
+            <li><a href="#3-伙伴系统">3. 伙伴系统</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#910-垃圾收集">9.10 垃圾收集</a>
+      <ul>
+        <li><a href="#9101-垃圾收集器的基本知识">9.10.1 垃圾收集器的基本知识</a></li>
+        <li><a href="#9102-marksweep垃圾收集器">9.10.2 Mark&amp;Sweep垃圾收集器</a></li>
+        <li><a href="#9103-c程序的保守marksweep">9.10.3 C程序的保守Mark&amp;Sweep</a></li>
+      </ul>
+    </li>
+    <li><a href="#911-c程序中常见的与内存有关的错误">9.11 C程序中常见的与内存有关的错误</a>
+      <ul>
+        <li><a href="#9111-间接引用坏指针">9.11.1 间接引用坏指针</a></li>
+        <li><a href="#9112-读未初始化的内存">9.11.2 读未初始化的内存</a></li>
+        <li><a href="#9113-允许栈缓冲区溢出">9.11.3 允许栈缓冲区溢出</a></li>
+        <li><a href="#9114-假设指针和它们指向的对象使相同大小的">9.11.4 假设指针和它们指向的对象使相同大小的</a></li>
+        <li><a href="#9115-造成错位错误">9.11.5 造成错位错误</a></li>
+        <li><a href="#9116-引用指针而不是它所指向的对象">9.11.6 引用指针，而不是它所指向的对象</a></li>
+        <li><a href="#9117-误解指针运算">9.11.7 误解指针运算</a></li>
+        <li><a href="#9118-引用不存在的变量">9.11.8 引用不存在的变量</a></li>
+        <li><a href="#9119-引用空闲堆块中的数据">9.11.9 引用空闲堆块中的数据</a></li>
+        <li><a href="#91110-引起内存泄漏">9.11.10 引起内存泄漏</a></li>
+      </ul>
+    </li>
+    <li><a href="#912-小结">9.12 小结</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="91-物理和虚拟寻址">9.1 物理和虚拟寻址</h2>
+<p>图9-1展示了一个物理寻址（physical addressing）的示例。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_1.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_1.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_1.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_1.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_1.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_1.png" /></p>
+<p>图9-2展示了现代处理器使用的一种称为虚拟寻址（virtual addressing）的寻址方式。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_2.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_2.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_2.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_2.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_2.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_2.png" /></p>
+<p>MMU：Memory Management Unit，内存管理单元</p>
+<h2 id="92-地址空间">9.2 地址空间</h2>
+<p>一个地址空间的大小是由表示最大地址所需要的位数来描述的。</p>
+<h2 id="93-虚拟内存作为缓存的工具">9.3 虚拟内存作为缓存的工具</h2>
+<p>概念上而言，虚拟内存被组织为一个由存放在磁盘上的N个连续的字节大小的单元组成的数组。每字节都有一个唯一的虚拟地址，作为到数组的索引。磁盘上数组的内容被缓存在主存中。</p>
+<p>在任意时刻，虚拟页面的集合都分为三个不相交的子集：</p>
+<ul>
+<li>未分配的：VM系统还未分配（或者未创建）的页。</li>
+<li>缓存的：当前已缓存在物理内存中的已分配页。</li>
+<li>未缓存的：未缓存在物理内存中的已分配页。</li>
+</ul>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_3.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_3.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_3.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_3.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_3.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_3.png" /></p>
+<h3 id="931-dram缓存的组织结构">9.3.1 DRAM缓存的组织结构</h3>
+<p>我们用<strong>SRAM</strong>缓存表示位于CPU和主存之间的L1、L2和L3高速缓存，用<strong>DRAM</strong>缓存表示虚拟内存系统的缓存，它在主存中缓存虚拟页。</p>
+<p>DRAM比SRAM速度慢大约10倍，而磁盘比DRAM慢大约10000倍，因此DRAM缓存不命中比SRAM缓存不命中要昂贵的多。归根到底，DRAM缓存的组织结构完全是由巨大的不命中开销驱动的。</p>
+<p>因为大的不命中处罚和访问第一个字节的开销，虚拟页往往很大，通常是4KB~2MB。由于大的不命中处罚，DRAM缓存是全相联的(fully associative)，即任何虚拟页都可以放置在任何的物理页中。不命中时的替换策略页很重要，因为替换错了虚拟页的处罚页非常之高。因此，与硬件对SRAM缓存相比，操作系统对DRAM缓存使用了更复杂精密的替换算法。最后，因为对磁盘的访问时间很长，DRAM缓存总是使用写回（write-back），而不是直写（write-through）。</p>
+<h3 id="932-页表">9.3.2 页表</h3>
+<p>页表(Page Table)将虚拟页映射到物理页，它是一个页表条目(Page Table Entry, PTE)的数组。虚拟地址空间中的每个页在页表中一个固定偏移量处都有一个PTE。</p>
+<p>假设每个PET是由一个有效位和一个n位地址字段组陈的。有效位表明了该虚拟页当前是否被缓存在DRAM中。如果没有设置有效位，那么一个空地址表示这个虚拟页还未被分配。否则，这个地址就指向该虚拟页在磁盘上的起始位置。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_4.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_4.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_4.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_4.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_4.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_4.png" /></p>
+<h3 id="933-页命中">9.3.3 页命中</h3>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_5.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_5.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_5.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_5.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_5.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_5.png" /></p>
+<h3 id="934-缺页">9.3.4 缺页</h3>
+<p>图9-6展示了在缺页之前我们的示例页表的状态。CPU引用了VP3中的一个字（VP3并未缓存在DRAM中）。地址翻译硬件从内存读取PTE3，从有效位推断VP3未被缓存，然后触发了一个缺页异常。缺页异常调用内核中的缺页异常处理程序，选择一个牺牲页，即存放在PP3中的VP4。如果VP4已经被修改了，那么内核就会将它复制回磁盘。</p>
+<p>图9-7展示了在缺页之后我们的示例页表的状态。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_6_7.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_6_7.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_6_7.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_6_7.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_6_7.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_6_7.png" /></p>
+<p>在磁盘和内存之间传送页的活动叫做交换(swapping)或者页面调度(paging)。页从磁盘换入(或页面调入)DRAM，从DRAM换出(或页面调出)磁盘。现代操作系统使用的页面调度策略叫做按需页面调度(demand paging)，这种策略一直等待直到最后时刻（也就是当由不命中发生时）才换入页面。</p>
+<h3 id="935-分配页面">9.3.5 分配页面</h3>
+<p>VP5的分配过程时在磁盘上创建空间并更新PTE5，使它指向磁盘上这个新创建的页面。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_8.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_8.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_8.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_8.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_8.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_8.png" /></p>
+<h3 id="936-又是局部性救了我们">9.3.6 又是局部性救了我们</h3>
+<p>虚拟内存效率很高，主要归功于局部性(locality)。</p>
+<p>尽管程序在整个运行过程中引用的不同页面的总数可能超过物理内存总大小，但是局部性原则保证了任意时刻，程序将趋向于在一个较小的活动页面(active page)集合上工作，这个集合叫做工作集(working set)或者常驻集合(redident set)。</p>
+<p>只要程序由好的时间局部性，虚拟内存系统就能工作得相当好。如果工作集的大小超出了物理内存的大小，那么程序将产生一种不幸的状态，叫做抖动(thrashing)，这时页面将不断地换进换出。</p>
+<h2 id="94-虚拟内存作为内存管理的工具">9.4 虚拟内存作为内存管理的工具</h2>
+<p>实际上，操作系统为每个进程提供了一个独立的页表，也就是一个独立的虚拟地址空间，如图9-9。注意，多个虚拟页面可以映射到同一个共享物理页面上。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_9.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_9.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_9.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_9.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_9.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_9.png" /></p>
+<p>按需页面调度和独立的虚拟地址空间的结合，对系统中内存的使用和管理造成了深远的影响。</p>
+<ul>
+<li>简化链接。独立的地址空间允许每个进程的内存映像使用相同的基本格式，而不管代码和数据实际存放在物理内存的何处。这样的一致性极大地简化了链接器的设计和实现。</li>
+<li>简化加载。要把目标文件中.text和.data加载到一个新创建的进程中，linux加载器为代码段和数据段分配虚拟页，把他们标记为无效的，被引用时按需加载即可。</li>
+<li>简化共享。在一些情况下，需要进程间共享代码和数据，比如printf。操作系统将不同进程中适当的虚拟页面映射到相同的物理页面，从而安排多个进程共享这个部分代码的一个副本。</li>
+<li>简化内存分配。当进程申请堆空间时，操作系统分配k个连续的虚拟内存页面，并把它们映射到物理内存中任意位置的k个物理页面。由于页表的工作方式，无需分配k个连续的物理内存页面，可以随机分散在物理内存中。</li>
+</ul>
+<h2 id="95-虚拟内存作为内存保护的工具">9.5 虚拟内存作为内存保护的工具</h2>
+<p>地址翻译机制可以以一种自然的方式来提供内存访问控制。每次CPU生成一个地址时，地址翻译硬件都会读一个PTE，所以通过在PTE上添加一些额外的许可位来控制对一个虚拟页面内容的访问十分简答。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_10.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_10.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_10.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_10.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_10.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_10.png" /></p>
+<p>图9-10展示的示例中，每个PTE中添加了三个许可位。SUP表示进程是否必须运行在内核模式下才能访问该页。READ和WRITE位控制对页面的读写访问。</p>
+<p>如果一条指令违反了这些许可条件，那么CPU就触发一个一般保护故障，将控制传递给一个内核中的异常处理程序。Linux shell一般将这种异常报告为&quot;段错误(segmentation fault)&quot;。</p>
+<h2 id="96-地址翻译">9.6 地址翻译</h2>
+<p>本节讲述的时地址翻译的基础知识，但省略了大量的细节，尤其是和时序相关的细节。图9-11概括了我们在这节里要使用的所有符号。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_11.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_11.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_11.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_11.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_11.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_11.png" /></p>
+<p>形式上来说，地址翻译时一个N元素的虚拟地址空间中元素和一个M元素的物理地址空间中元素之间的映射。图9-12展示了MMU如何利用页表来实现这种应映射。CPU中的一个控制寄存器，页表基址寄存器(Page Table Base Register, PTBR)指向当前页表。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_12.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_12.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_12.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_12.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_12.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_12.png" /></p>
+<p>图9-13a展示了当页面命中时，CPU硬件执行的步骤：</p>
+<ul>
+<li>第1步：处理器生成一个虚拟地址，并把它传送给MMU。</li>
+<li>第2步：MMU生成PTE地址，并从cache/main memory请求得到它。</li>
+<li>第3步：cache/main memory向MMU返回PTE。</li>
+<li>第4步：MMU构造物理地址，并把它传送给cache/main memory。</li>
+<li>第5步：cache/main memory返回所请求的数据给处理器。</li>
+</ul>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_13.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_13.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_13.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_13.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_13.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_13.png" /></p>
+<p>页面命中完全是由硬件来处理的。与之不同的是，处理缺页要求硬件和操作系统内核协作完成，如图9-13b所示：</p>
+<ul>
+<li>第1步到第3步：同9-13a中的第1步到第3步。</li>
+<li>第4步：PTE中的有效位是0，所以MMU触发了一次异常，传递CPU中的控制到操作系统内核中的缺页异常处理程序。</li>
+<li>第5步：缺页处理程序确定处物理内存中的牺牲页，如果这个页面已经被修改了，则把它换出到磁盘。</li>
+<li>第6步：缺页处理程序将调入新的页面，并更新内存中的PTE。</li>
+<li>第7步：缺页处理程序返回到原来的进程，再次执行导致缺页的指令。CPU将引起缺页的虚拟地址重新发送给MMU。因为虚拟页面现在缓存在物理内存中，所以就会命中，开始执行图9-13a中的步骤。</li>
+</ul>
+<h3 id="961-结合高速缓存和虚拟内存">9.6.1 结合高速缓存和虚拟内存</h3>
+<p>大多数操作系统，使用物理地址来访问SRAM高速缓存。使用物理寻址，多个进程同时在高速缓存中由存储块和共享来自相同虚拟页面的块称为很简单的事情，而且高速缓存无需处理保护问题（地址翻译来处理）。</p>
+<p>图9-14展示了一个物理寻址的高速缓存是如何和虚拟内存结合起来的。主要思路是地址翻译发生在高速缓存查找之前。注意，页表条目也可以缓存。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_14.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_14.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_14.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_14.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_14.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_14.png" /></p>
+<h3 id="962-利用tlb加速地址翻译">9.6.2 利用TLB加速地址翻译</h3>
+<p>MMU查阅PTE不命中时，会从内存多取一次数据，代价时几十到几百个周期。如果PTE碰巧缓存在L1 cache中，那么开销下降到1到2个周期。许多系统试图消除这些开销，它们在MMU中包括了一个关于PTE的小型缓存，称为翻译后备缓冲器(Translation Lookaside Buffer, TLB)。</p>
+<p>TLB是一个小的、虚拟寻址的缓存，其中每一行都保存着一个由单个PTE组成的块。TLB通常有高度的相连度。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_15_16.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_15_16.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_15_16.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_15_16.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_15_16.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_15_16.png" /></p>
+<p>图9-16a展示了当TLB命中时的步骤。这里的关键点是，所有的地址翻译步骤都是在芯片上的MMU中执行的，因此非常快。</p>
+<ul>
+<li>第1步：CPU产生一个虚拟地址。</li>
+<li>第2步和第3步：MMU从TLB中取出相应的PTE。</li>
+<li>第4步：MMU将这个虚拟地址翻译成一个物理地址，并且将它发送到cache/main memory。</li>
+<li>第5步：cache/main memory将所请求的数据字返回给CPU。</li>
+</ul>
+<p>图9-16b展示了当TLB不命中时的步骤。MMU必须冲L1缓存中取出相应的PTE。新取出的PTE存在到TLB中，可能会覆盖一个已经存在的条目。</p>
+<h3 id="963-多级页表">9.6.3 多级页表</h3>
+<p>假设我们有一个32位虚拟地址空间，页面大小4KB，PTE为4B。如果使用一级页表的话，需要4MB($4K=2^{12}, 32-12=20, 2^{20} * 4B=4MB$)的页表驻留在内存中。</p>
+<p>用来压缩页表的常用方法是使用层次结构的页表。图9-17展示了为这个虚拟地址空间构造一个两级的页表层次结构。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_17.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_17.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_17.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_17.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_17.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_17.png" /></p>
+<p>一级页表中每个PTE负责映射一个4MB的片(Chunk)，每一片都由1024个连续的页面组成。二级页表中的每个PTE负责映射一个4KB的虚拟内存页面。使用4B的PTE，一级和二级页表都是4KB，刚好和一个页面的大小是一样的。</p>
+<p>这种方法从两个方面减少了内存要求。第一，如果一级页表中的一个PTE是空的，那么相应的二级页表根本不会存在。第二，只有一级页表需要总是在主存中；虚拟内存系统可以在需要时创建、调入或调出二级页表，这就减少了主存压力；只有最经常使用的二级页表才需要缓存在主存中。</p>
+<p>图9-18描述了使用k级页表层次机构的地址翻译。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_18.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_18.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_18.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_18.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_18.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_18.png" /></p>
+<h3 id="964-综合端到端的地址翻译">9.6.4 综合：端到端的地址翻译</h3>
+<p>略。看后面i7的案例更好。</p>
+<h2 id="97-案例研究intel-core-i7linux内存系统">9.7 案例研究：Intel Core i7/Linux内存系统</h2>
+<p>现在的Core i7实现支持48位(256TB)虚拟地址空间和52位(4PB)物理地址空间。还有一个兼容模式，支持32位(4GB)虚拟和物理地址空间。</p>
+<p>图9-21给出了Core i7内存系统的重要部分。Linux使用的是4KB的页。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_21.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_21.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_21.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_21.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_21.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_21.png" /></p>
+<h3 id="971-core-i7地址翻译">9.7.1 Core i7地址翻译</h3>
+<p>图9-22总结了完整的Core i7地址翻译过程。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_22.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_22.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_22.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_22.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_22.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_22.png" /></p>
+<p>Core i7采用四级页表。CR3控制寄存器指向第一级页表(L1)的起始位置。CR3的值是每个进程上下文的一部分，每次上下文切换时，CR3的值都会被恢复。</p>
+<p>图9-23给出了第一级、第二级或第三级页表中条目的格式。当P=1时(Linux中就总是如此)，地址字段包含一个40位物理页号(PPN)，它指向适当的页表的开始处。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_23.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_23.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_23.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_23.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_23.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_23.png" /></p>
+<p>图9-24给出了第四级页表中条目的格式。当P=1时，地址字段包含一个40位物理页号(PPN)，它指向物理内存中某一页的基地址。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_24.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_24.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_24.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_24.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_24.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_24.png" /></p>
+<p>PTE由三个权限位，控制对页的访问：R/W位，U/S位，XD位（禁止从某些内存页获取指令，比如限制只能执行只读代码段来降低内核遭受缓冲区溢出攻击的风险）。</p>
+<p>当MMU翻译每一个虚拟地址时，它还会更新另外两个内核缺页处理程序会用到的位：A位，D位。</p>
+<p>图9-25给出了Core i7 MMU如何使用四级页表来将虚拟地址翻译成物理地址。36位VPN被划为成四个9位的片，每个片被用作到一个页表的偏移量。CR3寄存器包含到L1页表的物理地址。VPN1提供到L1 PTE的偏移量，这个PTE包含L2页表的基地址。VPN2提供到L2 PTE的偏移量，以此类推。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_25.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_25.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_25.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_25.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_25.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_25.png" /></p>
+<h3 id="972-linux虚拟内存系统">9.7.2 Linux虚拟内存系统</h3>
+<p>Linux为每个进程维护了一个单独的虚拟地址空间，形式如图9-26所示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_26.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_26.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_26.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_26.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_26.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_26.png" /></p>
+<p>内核虚拟内存包含内核中的代码和数据结构。内核虚拟内存的某些区域被映射到所有进程共享的物理页面。</p>
+<p>内核虚拟内存的其他区域包含每个进程都不相同的数据。比如，页表、内核在进程的上下文中执行代码时使用的栈，以及记录虚拟地址空间当前组织的各种数据结构。</p>
+<h4 id="1-linux虚拟内存区域">1. Linux虚拟内存区域</h4>
+<p>Linux将虚拟内存组织成一些区域(area，也叫段segment)的集合。一个区域就是已经存在的(已分配的)虚拟内存的连续片(chunk)，这些页是以某种方式相关联的。每个存在的虚拟页面都保存在某个区域中，而不属于某个区域的虚拟页是不存在的，并且不能被进程引用。区域的概念很重要，因为它允许虚拟地址空间有空隙。</p>
+<p>图7-27强调了记录一个进程中虚拟内存区域的内核数据结构。task_struct中的元素包含或者指向内核运行该进程所需要的所有信息（PID、指向用户栈的指针、可执行目标文件的名字、程序计数器等）。</p>
+<p>mm_struct描述了虚拟内存的当前状态。其中，pgd指向第一级页表的基址，而mmap指向一个vm_area_struct链表，其中每个vm_area_struct都描述了当前虚拟地址空间的一个区域。当内核运行这个进程时，就将pgd存放在CR3寄存器中。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_27.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_27.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_27.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_27.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_27.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_27.png" /></p>
+<h4 id="2-linux缺页异常处理">2. Linux缺页异常处理</h4>
+<p>假设MMU在试图翻译某个虚拟地址A时，触发了一个缺页。这个异常导致控制转移到内核的缺页处理程序。它执行以下步骤：</p>
+<ol>
+<li>虚拟地址A是合法的吗？如果不合法（不在任何区域中），则触发一个段错误，从而终止这个进程，对应图9-28中的情况1。</li>
+<li>试图进行的内存访问是否合法？即检查权限。如果不合法，则触发一个保护异常，对应图9-28中的情况2。</li>
+<li>选择一个牺牲页面，如果这个牺牲页面被修改过，那么就将它交换出去，换入新的页面并更新页表。当缺页处理程序返回时，CPU重新启动引起缺页的指令，这条指令将再次发送A到MMU。这次MMU就能正常地翻译A，而不会再产生缺页中断了。</li>
+</ol>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_28.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_28.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_28.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_28.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_28.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_28.png" /></p>
+<h2 id="98-内存映射">9.8 内存映射</h2>
+<p>Linux通过将一个虚拟内存区域与一个磁盘上的对象(Object)关联起来，以初始化这个虚拟内存区域的内容，这个过程称为内存映射(memory mapping)。虚拟内存区域可以映射到两种类型的对象中的一种：</p>
+<ol>
+<li>Linux文件系统中的普通文件：一个区域可以映射到一个普通磁盘文件的连续部分。因为按需进行页面调度，所以这些虚拟页面没有实际交换进入物理内存，直到CPU第一次引用到页面。</li>
+<li>匿名文件：内核创建，包含的全是二进制零。
+无论哪种情况，一旦一个虚拟页面被初始化了，它就在一个由内核维护的专门的交换文件(swap file)之间换来换去。交换文件也叫做交换空间(swap space)或者交换区域(swap area)。</li>
+</ol>
+<h3 id="981-再看共享对象">9.8.1 再看共享对象</h3>
+<p>一个对象可以被映射到虚拟内存的一个区域，要么作为共享对象，要么作为私有对象。</p>
+<p>假设进程1将一个共享对象映射到它的虚拟内存的一个区域，如图9-29a所示。现在进程2将同一个共享对象映射到它的地址空间。物理内存中只需要存放共享对象的一个副本。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_29.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_29.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_29.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_29.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_29.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_29.png" /></p>
+<p>私有对象使用一种叫做写时复制(copy-on-write)的技术被映射到虚拟内存中。一个私有对象开始生命周期的方式基本上和共享对象一样，在物理内存中只保存一份副本。如图9-30，对于每个映射私有对象的进程，相应私有区域的页表条目都被标记为只读，并且区域结构被标记为私有的写时复制。只要没有进程试图写它的私有区域，它们就可以继续共享物理内存中对象的一个单独副本。然而，只要有一个进程试图写私有区域内的某个页面，就会触发一个保护故障，会在物理内存中创建这个页面的一个新副本，更新页表条目指向这个恶心的副本，然后恢复这个页面的可写权限。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_30.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_30.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_30.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_30.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_30.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_30.png" /></p>
+<p>通过延迟私有对象中的副本直到最后可能的时刻，写时复制最充分地使用了稀有的物理内存。</p>
+<h3 id="982再看fork函数">9.8.2再看fork函数</h3>
+<p>当fork函数被当前进程调用时，内核为新进程创建各种数据结构，并分配给它一个唯一的PID。为了给这个新进程创建虚拟内存，它创建了当前进程的mm_struct、区域结构和页表的原样副本。它将两个进程中的每个页面都标记为只读，并将两个进程中的每个区域结构都标记为私有的写时复制。</p>
+<p>当fork在新进程中返回时，新进程现在的虚拟内存刚好和调用fork时存在的虚拟内存相同。当这两个进程中的任一个后来进行写操作时，写时复制机制就会创建新页面，因此，也就为每个进程保持了私有地址空间的抽象概念。</p>
+<h3 id="983-再看execve函数">9.8.3 再看execve函数</h3>
+<p>假设运行在当前进程中的程序执行了如下的execve调用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">execve(&#34;a.out&#34;, NULL, NULL);
+</code></pre></td></tr></table>
+</div>
+</div><p>加载并运行a.out需要以下几个步骤：</p>
+<ul>
+<li>删除已存在的用户区域</li>
+<li>映射私有区域。为新程序的代码、数据、bss和栈区域创建新的区域结构，所有这些新的区域都是私有的、写时复制的。图9-31概括了私有区域的不同映射。</li>
+<li>映射共享区域。</li>
+<li>设置程序计数器(PC)。</li>
+</ul>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_31.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_31.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_31.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_31.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_31.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_31.png" /></p>
+<h3 id="984-使用mmap函数的用户级内存映射">9.8.4 使用mmap函数的用户级内存映射</h3>
+<p>Linux进程可以使用mmap函数来创建新的虚拟内存区域，并将对象映射到这些区域中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">#include &lt;unistd.h&gt;
+#include &lt;sys/mman.h&gt;
+void mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
+int munmap(void *start, size_t length);
+</code></pre></td></tr></table>
+</div>
+</div><p>图9-32描述了参数的意义。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_32.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_32.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_32.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_32.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_32.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_32.png" /></p>
+<p>参数prot包含描述新映射的虚拟内存区域的访问权限位。参数flags由描述被映射对象类型的位组成。</p>
+<p>munmap函数删除虚拟内存的区域。</p>
+<h2 id="99-动态内存分配">9.9 动态内存分配</h2>
+<p>动态内存分配器(danymic memory allocator)维护着一个进程的虚拟内存区域，称为堆(heap)。堆紧邻bss段，向上生长(向更高的地址)。对于每个进程，内核维护着一个变量brk(break)，指向堆的顶部。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_33.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_33.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_33.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_33.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_33.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_33.png" /></p>
+<p>分配器将堆视为一组不同大小的块(block)的集合来维护。每个块就是一个连续的虚拟内存片(chunk)，要么是已分配的，要么是空闲的。</p>
+<p>分配器有两种基本风格，都要求应用显式地分配块。它们的不同在于由哪个实体来负责释放已分配的块：</p>
+<ul>
+<li>显式分配器(explicit allocator)：要求应用显式地释放任何已分配地块。例如c语言的malloc，用free来释放。</li>
+<li>隐式分配器(implicit allocator)：要求分配器检测一个已分配块何时不再被程序使用，那么就释放这个块。隐式分配器也叫垃圾收集器(garbage collector)，自动释放未使用的已分配的块的过程叫做垃圾收集(garbage collection)。</li>
+</ul>
+<h3 id="991-malloc和free函数">9.9.1 malloc和free函数</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">#include &lt;stdlib.h&gt;
+void *malloc(size_t size);
+// 若成功则返回已分配块的指针，若出错则为NULL
+
+void free(void *ptr);
+</code></pre></td></tr></table>
+</div>
+</div><p>malloc函数返回一个指针，指向大小为至少size字节的内存块，这个块会为可能包含在这个块内的任何数据对象类型做对齐。</p>
+<p>malloc不会初始化它返回的内存。calloc函数会将分配的内存初始化为0。</p>
+<p>free函数的ptr参数必须指向一个从malloc、calloc、realloc获得的已分配块的起始位置。</p>
+<h3 id="992-为什么要使用动态内存分配">9.9.2 为什么要使用动态内存分配</h3>
+<p>程序使用动态内存分配的最重要的原因是经常直到程序实际运行时，才知道某些数据结构的大小。比如经常遇到数组直到使用时才能确定其大小。</p>
+<h3 id="993-分配器的要求和目标">9.9.3 分配器的要求和目标</h3>
+<p>要求：</p>
+<ul>
+<li>处理任意请求序列。</li>
+<li>立即响应请求。</li>
+<li>只使用堆。</li>
+<li>对齐块。</li>
+<li>不修改已分配的块。</li>
+</ul>
+<p>目标：这两个目标通常时相互冲突的。</p>
+<ul>
+<li>最大化吞吐量。</li>
+<li>最大化内存利用率。</li>
+</ul>
+<p>在我们的经验中，描述一个分配器使用堆的效率的最有用的标准，是峰值利用率(peak utilization)。</p>
+<h3 id="994-碎片">9.9.4 碎片</h3>
+<p>内部碎片是在一个已分配块比有效载荷大时发生的。比如，一个分配器的实现可能对已分配块强加一个最小的size值，而这个size值比某个请求的有效载荷大。</p>
+<p>外部碎片是当空闲内存合计起来足够满足一个分配请求，但是没有一个单独的空闲块足够大到可以处理这个请求时发生的。</p>
+<p>外部碎片比内部碎片的量化要困难的多。因为外部碎片难以量化且不可预测，所以分配器通常采用启发式策略来试图维持少量的大空闲块，而不是维持大量的小空闲块。</p>
+<h3 id="995-实现问题">9.9.5 实现问题</h3>
+<p>一个分配器要在吞吐量和利用率之江把握好平衡，就必须考虑以下几个问题：</p>
+<ul>
+<li>空闲块组织：我们如何记录空闲块？</li>
+<li>放置：我们如何选择一个合适的空闲块来放置一个新分配的块？</li>
+<li>分割：在将一个新分配的块放置到某个空闲块之后，我们如何处理这个空闲块中的剩余部分？</li>
+<li>合并：我们如何处理一个刚刚被释放的块？</li>
+</ul>
+<h3 id="996-隐式空闲链表">9.9.6 隐式空闲链表</h3>
+<p>任何实际的分配器都需要一些数据结构，允许它来区别块边界，以及区别已分配块和空闲块。大多数分配器将这些信息嵌入块本身。一个简答的方法如图9-35所示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_35.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_35.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_35.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_35.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_35.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_35.png" /></p>
+<p>需要填充的原因由很多。比如，填充可能是分配器策略的一部分，用来对付外部碎片。或者也需要用它来满足对齐要求。</p>
+<p>我们可以将堆组织成一个连续的已分配块和空闲块的序列。如图9-36所示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_36.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_36.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_36.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_36.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_36.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_36.png" /></p>
+<p>我们称这种结构为隐式空闲链表，是因为空闲块是通过头部中的size字段隐含地连接着的。分配器可以通过遍历堆中所有的块，从而间接地遍历整个空闲块的空间。</p>
+<p>隐式空闲链表的优点是简单。显著的缺点是任何操作的开销，例如放置分配的块，要求对空闲链表进行搜索，该搜索所需时间与堆中已分配块和空闲块的总数呈线性关系。</p>
+<p>还有很重要的一点就是系统对齐要求和分配器对块格式的选择会对分配器上的最小块的size由强制的要求。</p>
+<h3 id="997-放置已分配的块">9.9.7 放置已分配的块</h3>
+<p>放置策略：</p>
+<ul>
+<li>首次适配(first fit)：从头开始遍历空闲链表，选择第一个合适的空闲块。</li>
+<li>下一次适配(next fit)：从上一次查询结束的地方开始搜索。</li>
+<li>最佳适配(best fit)：检查每个空闲块，选择所需请求大小的最小空闲块。</li>
+</ul>
+<h3 id="998-分割空闲块">9.9.8 分割空闲块</h3>
+<p>一旦分配器找到一个匹配的空闲块，它就必须决定分配这个空闲块中的多少空间。最简单的选择就是使用这个空闲块，缺点是会造成内部碎片。另一种选择就是分割空闲块。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png" />
+<img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_37.png" /></p>
+<h3 id="999-获取额外的堆内存">9.9.9 获取额外的堆内存</h3>
+<p>如果分配器不能为请求找到合适的空闲块，那么它将通过合并那些在内存中物理上相邻的空闲块来创建一个更大的空闲块。如果还不够大，或者都合并完还不够，那么分配器会通过调用sbrk函数，向内核请求额外的堆内存。</p>
+<h3 id="9910-合并空闲块">9.9.10 合并空闲块</h3>
+<p>为了解决假碎片问题，任何实际的分配器都必须合并相邻的空闲块，这个过程称为合并(coalescing)。</p>
+<p>何时合并？立即合并(immediate coalescing)，或者推迟合并(deferred coalescing)。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_38.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_38.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_38.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_38.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_38.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_38.png" /></p>
+<h3 id="9911-带边界标记的合并">9.9.11 带边界标记的合并</h3>
+<p>分配器是如何实现合并的？对隐式空闲链表来说，合并下一个空闲块很简答。</p>
+<p>那么如何合并前面的块呢？Knuth提出了边界标记(boundary tag)技术，允许在常数时间内进行对前面块的合并。它的思想是在每个块的结尾处添加一个脚部(footer)，这个脚部就是头部的一个副本。分配器可以通过脚部来判断前面一个块的起始位置和状态。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_39.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_39.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_39.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_39.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_39.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_39.png" /></p>
+<h3 id="9912-综合实现一个简单的分配器">9.9.12 综合：实现一个简单的分配器</h3>
+<p>略</p>
+<h3 id="9913-显式空闲链表">9.9.13 显式空闲链表</h3>
+<p>堆可以组织成一个双向空闲链表，每个空闲块都包含一个pred和succ指针，如图9-48所示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_48.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_48.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_48.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_48.png 2x"
+        data-sizes="auto"
+        alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_48.png"
+        title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_9_48.png" /></p>
+<p>分配块和释放块的时间，取决于空闲链表中块的排序策略。一种方法是FIFO的顺序维护链表。另一种方法是按照地址顺序来维护链表，其中每个块的地址都小于它后继的地址。</p>
+<h3 id="9914-分离的空闲链表">9.9.14 分离的空闲链表</h3>
+<p>分离存储(segregated storage)，就是维护多个空闲链表，其中每个链表中的块有大致相等的大小。一般的思路是将所有可能的块大小分成一些等价类，也叫做大小类(size class)。最简单的方式就是根据2的幂来划分块大小。</p>
+<p>分配器维护着一个空闲链表数组，每个大小类一个空闲链表，按照大小的升序排列。当分配器需要一个大小为n的块时，它就搜索相应的空闲链表。如果不能找到合适的块与之匹配，它就搜索下一个链表，以此类推。</p>
+<p>有关动态内存分配的文献，描述了几十种分离存储方法，主要区别在于它们如何定义大小类，何时进行合并，何时向操作系统请求额外的堆内存，是否允许分割，等等。</p>
+<h4 id="1-简单分离存储">1. 简单分离存储</h4>
+<p>每个大小类的空闲链表包含大小相同的块，每个块的大小就是这个大小类中最大元素的大小。</p>
+<p>优点很多。分配和释放都是很快的常数时间的操作。每个片中都是大小相等的块，不分割，不合并，内存开销少。</p>
+<p>一个显著的缺点是很容易造成内部和外部碎片。</p>
+<h4 id="2-分离适配">2. 分离适配</h4>
+<p>分配器维护一个空闲链表的数组，每个空闲链表是和一个大小类相关联的，而且被组织成某种类型的显式或隐式链表。每个链表包含潜在的大小不同的块，这些块的大小是大小类的成员。</p>
+<p>这里，我们描述了一种简单的版本。为了分配一个块，必须确定请求的大小类，并且对适当的空闲链表做首次适配，査找一个合适的块。如果找到了一个，那么就（可选地）分割它，并将剩余的部分插入到适当的空闲链表中。如果找不到合适的块，那么就搜索下一个更大的大小类的空闲链表。如此重复，直到找到一个合适的块。如果空闲链表中没有合适的块，那么就向操作系统请求额外的堆内存，从这个新的堆内存中分配出一个块，将剩余部分放置在适当的大小类中。要释放一个块，我们执行合并，并将结果放置到相应的空闲链表中。</p>
+<p>分离适配方法是一种常见的选择，C标准库提供的GNU malloc包就是采用这种方法，既快速又高效。</p>
+<h4 id="3-伙伴系统">3. 伙伴系统</h4>
+<p>伙伴系统(buddy system)是分离适配的一种特例，其中每个大小类都是2的幂。基本思路是假设一个堆的大小为$2^m$个字，我们为每个块大小$2^k$维护一个分离空闲链表，其中$0\leqslant k \leqslant m$。请求块大小向上舍入到最接近的2的幂。最开始时，只有一个大小为$2^m$个字的空闲块。</p>
+<p>为了分配一个大小为$2^k$的块，我们找到第一个可用的、大小为$2^j$的块，其中$k\leqslant j \leqslant m$。如果 $j=k$，那么我们就完成了。否则，我们递归地二分割这个块，直到当我们进行这样的分割时，每个剩下的半块（也叫做伙伴）被放置在相应的空闲链表中。要释放一个大小为$2^k$的块，我们继续合并空闲的伙伴。当遇到一个已分配的伙伴时，我们就停止合并。</p>
+<p>伙伴系统分配器的主要优点是它的快速搜索和快速合并。主要缺点是要求块大小为 2 的幂可能导致显著的内部碎片。因此，伙伴系统分配器不适合通用目的的工作负载。然而，对于某些特定应用的工作负载，其中块大小预先知道是 2 的幂，伙伴系统分配器就很有吸引力了。</p>
+<h2 id="910-垃圾收集">9.10 垃圾收集</h2>
+<h3 id="9101-垃圾收集器的基本知识">9.10.1 垃圾收集器的基本知识</h3>
+<h3 id="9102-marksweep垃圾收集器">9.10.2 Mark&amp;Sweep垃圾收集器</h3>
+<h3 id="9103-c程序的保守marksweep">9.10.3 C程序的保守Mark&amp;Sweep</h3>
+<h2 id="911-c程序中常见的与内存有关的错误">9.11 C程序中常见的与内存有关的错误</h2>
+<h3 id="9111-间接引用坏指针">9.11.1 间接引用坏指针</h3>
+<h3 id="9112-读未初始化的内存">9.11.2 读未初始化的内存</h3>
+<h3 id="9113-允许栈缓冲区溢出">9.11.3 允许栈缓冲区溢出</h3>
+<h3 id="9114-假设指针和它们指向的对象使相同大小的">9.11.4 假设指针和它们指向的对象使相同大小的</h3>
+<h3 id="9115-造成错位错误">9.11.5 造成错位错误</h3>
+<h3 id="9116-引用指针而不是它所指向的对象">9.11.6 引用指针，而不是它所指向的对象</h3>
+<h3 id="9117-误解指针运算">9.11.7 误解指针运算</h3>
+<h3 id="9118-引用不存在的变量">9.11.8 引用不存在的变量</h3>
+<h3 id="9119-引用空闲堆块中的数据">9.11.9 引用空闲堆块中的数据</h3>
+<h3 id="91110-引起内存泄漏">9.11.10 引起内存泄漏</h3>
+<h2 id="912-小结">9.12 小结</h2>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2021-01-04</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/csapp_chapter9/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://yrc0d3.github.io/csapp_chapter9/" data-title="[CSAPP]第九章 虚拟内存" data-hashtags="caspp"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://yrc0d3.github.io/csapp_chapter9/" data-hashtag="caspp"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 WhatsApp" data-sharer="whatsapp" data-url="https://yrc0d3.github.io/csapp_chapter9/" data-title="[CSAPP]第九章 虚拟内存" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://yrc0d3.github.io/csapp_chapter9/" data-title="[CSAPP]第九章 虚拟内存"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://yrc0d3.github.io/csapp_chapter9/" data-title="[CSAPP]第九章 虚拟内存"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Myspace" data-sharer="myspace" data-url="https://yrc0d3.github.io/csapp_chapter9/" data-title="[CSAPP]第九章 虚拟内存" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="分享到 Blogger" data-sharer="blogger" data-url="https://yrc0d3.github.io/csapp_chapter9/" data-title="[CSAPP]第九章 虚拟内存" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Evernote" data-sharer="evernote" data-url="https://yrc0d3.github.io/csapp_chapter9/" data-title="[CSAPP]第九章 虚拟内存"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/caspp/">caspp</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/csapp_chapter8/" class="prev" rel="prev" title="[CSAPP]第八章 异常控制流"><i class="fas fa-angle-left fa-fw"></i>[CSAPP]第八章 异常控制流</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

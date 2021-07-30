@@ -8,10 +8,10 @@
         <title>[CSAPP]第五章 优化程序性能 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="[CSAPP]第五章 优化程序性能" />
 <meta property="og:description" content="编写高效程序需要做到以下几点： 我们必须选择一组适当的算法和数据结构。 我们必须编写出编译器能够有效优化以转换成高效可执行代码的源代码。 针对处理" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://yrc0d3.github.io/csapp_chapter5/" />
-<meta property="og:image" content="https://yrc0d3.github.io/logo.png"/>
+<meta property="og:url" content="https://yrc0d3.github.io/csapp_chapter5/" /><meta property="og:image" content="https://yrc0d3.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2020-02-01T23:17:28+08:00" />
 <meta property="article:modified_time" content="2020-02-01T23:17:28+08:00" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://yrc0d3.github.io/logo.png"/>
 
@@ -34,7 +34,7 @@
                 "url": "https:\/\/yrc0d3.github.io\/cover.png",
                 "width":  800 ,
                 "height":  600 
-            },"genre": "posts","keywords": "caspp","wordcount":  6923 ,
+            },"genre": "posts","keywords": "caspp","wordcount":  6922 ,
         "url": "https:\/\/yrc0d3.github.io\/csapp_chapter5\/","datePublished": "2020-02-01T23:17:28+08:00","dateModified": "2020-02-01T23:17:28+08:00","publisher": {
                 "@type": "Organization",
                 "name": "xxxx",
@@ -118,7 +118,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[CSAPP]第五章 优化程序性能</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>读书笔记</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-02-01">2020-02-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6923 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-02-01">2020-02-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 6922 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 14 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -192,7 +192,7 @@
 <p>下面看个示例：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -204,7 +204,7 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">void twiddle1(long *xp, long *yp)
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">void twiddle1(long *xp, long *yp)
 {
     *xp += *yp;
     *yp += *xp;
@@ -244,13 +244,13 @@ void twiddle2(long *xp, long *yp)
 <h2 id="53-程序示例">5.3 程序示例</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct {
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct {
     long len;
     data_t *data;
 } vec_rec, *vec_prt;
@@ -259,10 +259,10 @@ void twiddle2(long *xp, long *yp)
 </div><p><code>data_t</code>表示基本元素的数据类型。在测试中，我们度量代码对于整数(C语言的int和long)和浮点数(C语言的float和double)数据的性能，因此会使用类似如下的声明：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">typedef long data_t;
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">typedef long data_t;
 </code></pre></td></tr></table>
 </div>
 </div><p>图5-4给出的是一些生成向量、访问向量元素以及确定向量长度的基本过程。</p>
@@ -286,22 +286,22 @@ void twiddle2(long *xp, long *yp)
 <p>以下声明可对向量的元素求和：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">#define IDENT 0
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">#define IDENT 0
 #define OP +
 </code></pre></td></tr></table>
 </div>
 </div><p>以下声明可对向量的元素求乘积：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">#define IDENT 1
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">#define IDENT 1
 #define OP *
 </code></pre></td></tr></table>
 </div>
@@ -315,7 +315,7 @@ void twiddle2(long *xp, long *yp)
         data-sizes="auto"
         alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5_result.png"
         title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_5_result.png" /></p>
-<p>从中可以看出，使用命令行选项&rdquo;-O1&quot;进行基本优化，都能显著提高程序性能。</p>
+<p>从中可以看出，使用命令行选项&quot;-O1&quot;进行基本优化，都能显著提高程序性能。</p>
 <h2 id="54-消除循环的低效率">5.4 消除循环的低效率</h2>
 <p>识别循环中要执行多次但是计算结果不会改变的计算，将其移动到循环外面。</p>
 <p>图5-6是combine2的代码。与combine1相比，性能提升了不少。</p>
@@ -473,13 +473,13 @@ void twiddle2(long *xp, long *yp)
         title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_5_26.png" /></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">// combine5
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// combine5
 acc = (acc OP data[i]) OP data[i+1];
 // combine7
 acc = acc OP (data[i] OP data[i+1]);
@@ -627,8 +627,8 @@ acc = acc OP (data[i] OP data[i+1]);
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.71.1">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 
