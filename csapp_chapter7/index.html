@@ -201,23 +201,23 @@
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// main.c
-int sum(int *a, int n);
-int array[2] = {1, 2};
-int main() {
-    int val = sum(array, 2);
-    return val;
-}
-
-// sum.c
-int sum(int *a, int n) {
-    int i, s = 0;
-    for (i =0; i &lt; n; i++) {
-        s += a[i];
-    }
-    return s;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// main.c
+</span></span><span class="line"><span class="cl">int sum(int *a, int n);
+</span></span><span class="line"><span class="cl">int array[2] = {1, 2};
+</span></span><span class="line"><span class="cl">int main() {
+</span></span><span class="line"><span class="cl">    int val = sum(array, 2);
+</span></span><span class="line"><span class="cl">    return val;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// sum.c
+</span></span><span class="line"><span class="cl">int sum(int *a, int n) {
+</span></span><span class="line"><span class="cl">    int i, s = 0;
+</span></span><span class="line"><span class="cl">    for (i =0; i &lt; n; i++) {
+</span></span><span class="line"><span class="cl">        s += a[i];
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    return s;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>大多数编译系统提供<strong>编译器驱动程序</strong>(compiler driver)，它代表用户在需要时调用语言预处理器、编译器、汇编器、链接器。使用GNU编译系统构造示例程序，可以用命令<code>gcc -Og -o prog main.c sum.c</code></p>
 <p><img
@@ -245,11 +245,11 @@ int sum(int *a, int n) {
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">cpp [other options] main.c /tmp/main.i
-cc1 /tmp/main.i -Og [other options] -o /tmp/main.s
-as [other options] -o /tmp/main.o /tmp/main.s
-ld -o prog [system object files and args] /tmp/main.o /tmp/sum.o
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cpp [other options] main.c /tmp/main.i
+</span></span><span class="line"><span class="cl">cc1 /tmp/main.i -Og [other options] -o /tmp/main.s
+</span></span><span class="line"><span class="cl">as [other options] -o /tmp/main.o /tmp/main.s
+</span></span><span class="line"><span class="cl">ld -o prog [system object files and args] /tmp/main.o /tmp/sum.o
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="72-静态链接">7.2 静态链接</h2>
 <p>像Linux LD程序这样的<strong>静态链接器</strong>(static linker)以一组可重定位目标文件和命令行参数作为输入，生成一个完全链接的、可以加载和运行的可执行目标文件作为输出。输入的可重定位目标文件是由各种不同的代码和数据节(section)组成，每一节都是一个连续的字节序列。</p>
@@ -313,16 +313,16 @@ ELF header和section header table之间是不同的节：</p>
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct {
-    int   name;      \* String table offset *\
-    char  type:4,    \* Function or data (4 bits) *\
-          binding:4; \* Local or global (4 bits) *\
-    char  reserved;  \* Unused *\
-    short section;   \* Section header index*\
-    long  value;     \* Section offset or absolute address *\
-    long  size;      \* Object size in bytes *\
-} Elf64_Symbol;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">typedef struct {
+</span></span><span class="line"><span class="cl">    int   name;      \* String table offset *\
+</span></span><span class="line"><span class="cl">    char  type:4,    \* Function or data (4 bits) *\
+</span></span><span class="line"><span class="cl">          binding:4; \* Local or global (4 bits) *\
+</span></span><span class="line"><span class="cl">    char  reserved;  \* Unused *\
+</span></span><span class="line"><span class="cl">    short section;   \* Section header index*\
+</span></span><span class="line"><span class="cl">    long  value;     \* Section offset or absolute address *\
+</span></span><span class="line"><span class="cl">    long  size;      \* Object size in bytes *\
+</span></span><span class="line"><span class="cl">} Elf64_Symbol;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>每个符号都被分配到目标文件的某个section，由section字段表示。有三个特殊的伪节(pseudosection)，它们在section header table中没有条目：ABS代表不该被重定位的符号；UNDEF代表未定义的符号，也就是在本module中引用，但在其他地方定义的符号；COMMON表示还未被分配位置的未初始化的数据目标。</p>
 <p>COMMON和.bss的区别：</p>
@@ -370,8 +370,8 @@ Ndx=1表示.text section，Ndx=3表示.data section</p>
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">linux&gt; gcc main.c /use/lib/libm.a /usr/lib/libc.a
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">linux&gt; gcc main.c /use/lib/libm.a /usr/lib/libc.a
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在链接时，链接器将只复制被程序引用的目标模块，这就减少了可执行文件在磁盘和内存中的大小。另一方面，应用程序员只需要包含较少的库文件的名字。</p>
 <p>在Linux系统中，静态库以一种称为<strong>存档</strong>(archive)的特殊文件格式存放在磁盘中。存档文件是一组连接起来的可重定位目标文件的集合，有一个头部用来描述每个成员目标文件的大小和位置。存档文件名由后缀.a标识。（备注：.a文件是一组.o文件的集合）</p>
@@ -425,13 +425,13 @@ Ndx=1表示.text section，Ndx=3表示.data section</p>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct {
-    long offset;    /* Offset of the reference to relocate */
-    long type:32,   /* Relocation type */
-         symbol:32; /* Symbol table index */
-    long addend;    /* Constant part of relocation expression */
-} Elf64_Rela;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">typedef struct {
+</span></span><span class="line"><span class="cl">    long offset;    /* Offset of the reference to relocate */
+</span></span><span class="line"><span class="cl">    long type:32,   /* Relocation type */
+</span></span><span class="line"><span class="cl">         symbol:32; /* Symbol table index */
+</span></span><span class="line"><span class="cl">    long addend;    /* Constant part of relocation expression */
+</span></span><span class="line"><span class="cl">} Elf64_Rela;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>ELF定义了32种不同的重定位类型，我们只关心两种最基本的：</p>
 <ul>
@@ -466,9 +466,9 @@ Ndx=1表示.text section，Ndx=3表示.data section</p>
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">ADDR(s) = ADDR(.text) = 0x4004d0
-ADDR(r.symbol) = ADDR(sum) = 0x4004e8
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ADDR(s) = ADDR(.text) = 0x4004d0
+</span></span><span class="line"><span class="cl">ADDR(r.symbol) = ADDR(sum) = 0x4004e8
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="2-重定位绝对引用">2. 重定位绝对引用</h4>
 <p>图7-11的第4行种，mov将array的地址复制到%edi中。
@@ -478,8 +478,8 @@ ADDR(r.symbol) = ADDR(sum) = 0x4004e8
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">ADDR(r.symbol) = ADDR(array) = 0x601018
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ADDR(r.symbol) = ADDR(array) = 0x601018
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>综合起来，图7-12给出了最终可执行目标文件中已重定位的.text节和.data节。在加载的时候，加载器会把这些节中的字节直接复制到内存，不再进行任何修改地执行这些指令。</p>
 <p><img
@@ -596,9 +596,9 @@ ADDR(r.symbol) = ADDR(sum) = 0x4004e8
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">&gt; gcc -DCOMPILETIME -c mymalloc.c
-&gt; gcc -I. -o intc int.c mymalloc.o
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt; gcc -DCOMPILETIME -c mymalloc.c
+</span></span><span class="line"><span class="cl">&gt; gcc -I. -o intc int.c mymalloc.o
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>由于有<code>-I.</code>参数，所以会进行打桩，它告诉C预处理器在搜索通常的系统目录之前，先在当前目录中查找malloc.h。</p>
 <h3 id="7132-链接时打桩">7.13.2 链接时打桩</h3>
@@ -611,10 +611,10 @@ ADDR(r.symbol) = ADDR(sum) = 0x4004e8
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">&gt; gcc -DLINKTIME -c mymalloc.c
-&gt; gcc -c int.c
-&gt; gcc -Wl,--wrap,malloc -Wl,--wrap,free -o intl int.o mymalloc.o
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt; gcc -DLINKTIME -c mymalloc.c
+</span></span><span class="line"><span class="cl">&gt; gcc -c int.c
+</span></span><span class="line"><span class="cl">&gt; gcc -Wl,--wrap,malloc -Wl,--wrap,free -o intl int.o mymalloc.o
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><img
         class="lazyload"
@@ -668,8 +668,8 @@ ADDR(r.symbol) = ADDR(sum) = 0x4004e8
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.96.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 

@@ -204,17 +204,17 @@
 </span><span class="lnt">10
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">void twiddle1(long *xp, long *yp)
-{
-    *xp += *yp;
-    *yp += *xp;
-}
-
-void twiddle2(long *xp, long *yp)
-{
-    *xp += 2* *yp;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">void twiddle1(long *xp, long *yp)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    *xp += *yp;
+</span></span><span class="line"><span class="cl">    *yp += *xp;
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">void twiddle2(long *xp, long *yp)
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">    *xp += 2* *yp;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>乍一看，两个过程似乎有相同的行为。但当xp等于yp时，结果就不同了。这种两个指针可能指向同一个内存位置的情况称为<strong>内存别名使用(memory aliasing)</strong>。在只执行安全的优化中，编译器必须假设不同的指针可能会指向内存中同一个位置。</p>
 <p>第二个妨碍优化的因素是函数调用。当被优化的函数有<strong>副作用</strong>时，很可能优化后的行为是错误的。</p>
@@ -250,11 +250,11 @@ void twiddle2(long *xp, long *yp)
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">typedef struct {
-    long len;
-    data_t *data;
-} vec_rec, *vec_prt;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">typedef struct {
+</span></span><span class="line"><span class="cl">    long len;
+</span></span><span class="line"><span class="cl">    data_t *data;
+</span></span><span class="line"><span class="cl">} vec_rec, *vec_prt;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>data_t</code>表示基本元素的数据类型。在测试中，我们度量代码对于整数(C语言的int和long)和浮点数(C语言的float和double)数据的性能，因此会使用类似如下的声明：</p>
 <div class="highlight"><div class="chroma">
@@ -262,8 +262,8 @@ void twiddle2(long *xp, long *yp)
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">typedef long data_t;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">typedef long data_t;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>图5-4给出的是一些生成向量、访问向量元素以及确定向量长度的基本过程。</p>
 <p><img
@@ -290,9 +290,9 @@ void twiddle2(long *xp, long *yp)
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">#define IDENT 0
-#define OP +
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#define IDENT 0
+</span></span><span class="line"><span class="cl">#define OP +
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>以下声明可对向量的元素求乘积：</p>
 <div class="highlight"><div class="chroma">
@@ -301,9 +301,9 @@ void twiddle2(long *xp, long *yp)
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">#define IDENT 1
-#define OP *
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#define IDENT 1
+</span></span><span class="line"><span class="cl">#define OP *
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在我们的讲述中，我们会对这段代码进行一系列的变化，写出这个合并函数的不同版本。</p>
 <p>作为一个起点，下表给出的是combine1的CPE度量值，它运行在我们的参考机上(一台Intel Core i7 Haswell处理器机器)。实验显示，32位整数和64位整数，性能相同。浮点数也一样。</p>
@@ -479,11 +479,11 @@ void twiddle2(long *xp, long *yp)
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// combine5
-acc = (acc OP data[i]) OP data[i+1];
-// combine7
-acc = acc OP (data[i] OP data[i+1]);
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// combine5
+</span></span><span class="line"><span class="cl">acc = (acc OP data[i]) OP data[i+1];
+</span></span><span class="line"><span class="cl">// combine7
+</span></span><span class="line"><span class="cl">acc = acc OP (data[i] OP data[i+1]);
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>差别仅在于两个括号时如何放置的。我们称之为<strong>重新结合变换(reassociation transformatino)</strong>。</p>
 <p>整数加法的性能没变化，整数乘法、浮点加法、浮点乘法的性能，则提升了一倍。</p>
@@ -627,8 +627,8 @@ acc = acc OP (data[i] OP data[i+1]);
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.96.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 

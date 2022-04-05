@@ -20,7 +20,7 @@
 <meta name="application-name" content="LoveIt">
 <meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/csapp_chapter9/" /><link rel="prev" href="https://yrc0d3.github.io/csapp_chapter8/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/csapp_chapter9/" /><link rel="prev" href="https://yrc0d3.github.io/csapp_chapter8/" /><link rel="next" href="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -558,8 +558,8 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">execve(&#34;a.out&#34;, NULL, NULL);
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">execve(&#34;a.out&#34;, NULL, NULL);
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>加载并运行a.out需要以下几个步骤：</p>
 <ul>
@@ -586,11 +586,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">#include &lt;unistd.h&gt;
-#include &lt;sys/mman.h&gt;
-void mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
-int munmap(void *start, size_t length);
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#include &lt;unistd.h&gt;
+</span></span><span class="line"><span class="cl">#include &lt;sys/mman.h&gt;
+</span></span><span class="line"><span class="cl">void mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset);
+</span></span><span class="line"><span class="cl">int munmap(void *start, size_t length);
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>图9-32描述了参数的意义。</p>
 <p><img
@@ -629,12 +629,12 @@ int munmap(void *start, size_t length);
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">#include &lt;stdlib.h&gt;
-void *malloc(size_t size);
-// 若成功则返回已分配块的指针，若出错则为NULL
-
-void free(void *ptr);
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#include &lt;stdlib.h&gt;
+</span></span><span class="line"><span class="cl">void *malloc(size_t size);
+</span></span><span class="line"><span class="cl">// 若成功则返回已分配块的指针，若出错则为NULL
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">void free(void *ptr);
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>malloc函数返回一个指针，指向大小为至少size字节的内存块，这个块会为可能包含在这个块内的任何数据对象类型做对齐。</p>
 <p>malloc不会初始化它返回的内存。calloc函数会将分配的内存初始化为0。</p>
@@ -810,12 +810,13 @@ void free(void *ptr);
         </section>
     </div>
 
-    <div class="post-nav"><a href="/csapp_chapter8/" class="prev" rel="prev" title="[CSAPP]第八章 异常控制流"><i class="fas fa-angle-left fa-fw"></i>[CSAPP]第八章 异常控制流</a></div>
+    <div class="post-nav"><a href="/csapp_chapter8/" class="prev" rel="prev" title="[CSAPP]第八章 异常控制流"><i class="fas fa-angle-left fa-fw"></i>[CSAPP]第八章 异常控制流</a>
+            <a href="/apple_silicon_mac_install_vm_ubuntu/" class="next" rel="next" title="Apple Silicon M1的Mac电脑安装ubuntu虚拟机">Apple Silicon M1的Mac电脑安装ubuntu虚拟机<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.96.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 

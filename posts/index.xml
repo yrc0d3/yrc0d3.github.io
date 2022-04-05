@@ -3,7 +3,14 @@
         <title>所有文章 - my blog</title>
         <link>https://yrc0d3.github.io/posts/</link>
         <description>所有文章 | my blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Mon, 04 Jan 2021 22:27:22 &#43;0800</lastBuildDate><atom:link href="https://yrc0d3.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 26 Mar 2022 22:12:11 &#43;0800</lastBuildDate><atom:link href="https://yrc0d3.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>Apple Silicon M1的Mac电脑安装ubuntu虚拟机</title>
+    <link>https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/</link>
+    <pubDate>Sat, 26 Mar 2022 22:12:11 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/</guid>
+    <description><![CDATA[为了学习linux内核，安装一个ubuntu虚拟机比较方便。 安装虚拟机软件 Parallel Desktop收费，pass。 VMWare Fusion还是技术预览版。 最终]]></description>
+</item><item>
     <title>[CSAPP]第九章 虚拟内存</title>
     <link>https://yrc0d3.github.io/csapp_chapter9/</link>
     <pubDate>Mon, 04 Jan 2021 22:27:22 &#43;0800</pubDate>
@@ -66,12 +73,5 @@
     <author>作者</author>
     <guid>https://yrc0d3.github.io/csapp_chapter2/</guid>
     <description><![CDATA[2.1 信息存储 2.1.1 十六进制表示法 2.1.2 字数据大小 2.1.3 寻址和字节顺序 2.1.4 表示字符串 2.1.5 表示代码 2.1.6 布尔代数简介 2.1.7 C语言中的位级运算 2.1.8 C语言中的逻辑运算 2.1.9 C语言中]]></description>
-</item><item>
-    <title>[CSAPP]第一章 计算机系统漫游</title>
-    <link>https://yrc0d3.github.io/csapp_chapter1/</link>
-    <pubDate>Mon, 02 Dec 2019 22:56:45 &#43;0800</pubDate>
-    <author>作者</author>
-    <guid>https://yrc0d3.github.io/csapp_chapter1/</guid>
-    <description><![CDATA[示例程序hello.c 1 2 3 4 5 6 7 #include &lt;stdio.h&gt; int main() { printf(&#34;hello, world\n&#34;); return 0; } 1.1 信息就是bits+context hello.c程序是以字节序列的方式存储在文件中的]]></description>
 </item></channel>
 </rss>

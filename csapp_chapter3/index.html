@@ -34,7 +34,7 @@
                 "url": "https:\/\/yrc0d3.github.io\/cover.png",
                 "width":  800 ,
                 "height":  600 
-            },"genre": "posts","keywords": "caspp","wordcount":  11576 ,
+            },"genre": "posts","keywords": "caspp","wordcount":  11588 ,
         "url": "https:\/\/yrc0d3.github.io\/csapp_chapter3\/","datePublished": "2019-12-09T23:04:22+08:00","dateModified": "2019-12-09T23:04:22+08:00","publisher": {
                 "@type": "Organization",
                 "name": "xxxx",
@@ -118,7 +118,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[CSAPP]第三章 程序的机器级表示</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>读书笔记</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-12-09">2019-12-09</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 11576 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-12-09">2019-12-09</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 11588 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 24 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -248,13 +248,13 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">long mult2(long, long);
-
-void multstore(long x, long y, long *dest) {
-    long t = mult2(x, y);
-    *dest = t;
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">long mult2(long, long);
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">void multstore(long x, long y, long *dest) {
+</span></span><span class="line"><span class="cl">    long t = mult2(x, y);
+</span></span><span class="line"><span class="cl">    *dest = t;
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>运行命令<code>gcc -Og -S mstore.c</code>产生的汇编文件代码包含以下几行：</p>
 <div class="highlight"><div class="chroma">
@@ -268,14 +268,14 @@ void multstore(long x, long y, long *dest) {
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">multstore:
-  pushq   %rbx
-  movq    %rdx, %rbx
-  call    mult2
-  movq    %rax, (%rbx)
-  popq    %rbx
-  ret
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">multstore:
+</span></span><span class="line"><span class="cl">  pushq   %rbx
+</span></span><span class="line"><span class="cl">  movq    %rdx, %rbx
+</span></span><span class="line"><span class="cl">  call    mult2
+</span></span><span class="line"><span class="cl">  movq    %rax, (%rbx)
+</span></span><span class="line"><span class="cl">  popq    %rbx
+</span></span><span class="line"><span class="cl">  ret
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面代码中每个缩进去的行都对应与一条机器指令。</p>
 <p>使用<code>gcc -Og -c mstore.c</code>会编译并汇编该代码，产生目标文件mstore.o，它是二进制格式的。1368字节的mstore.o中有一段14字节的序列，它的十六进制表示为：</p>
@@ -284,8 +284,8 @@ void multstore(long x, long y, long *dest) {
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">53 48 89 d3 e8 00 00 00 00 48 89 03 5b c3
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">53 48 89 d3 e8 00 00 00 00 48 89 03 5b c3
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这即是上面的汇编指令对应的目标代码。我们可以从中得到一个重要信息，即机器执行的程序只是一个字节序列，它是对一系列指令的编码。</p>
 <p>要查看机器代码文件的内容，有一类称为反汇编器(disassambler)的程序非常有用。Linux中可以用<code>objdump -d mstore.o</code>得到如下结果：</p>
@@ -317,23 +317,23 @@ void multstore(long x, long y, long *dest) {
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">        .file   &#34;010-mstore.c&#34;
-        .text
-        .globl  multstore
-        .type   multstore, @function
-multstore:
-        pushq   %rbx
-        movq    %rdx, %rbx
-        call    mult2
-        movq    %rax, (%rbx)
-        popq    %rbx
-        ret
-        .size   multstore, .-multstore
-        .ident  &#34;GCC: (Ubuntu 4.8.1-2ubuntu1~12.04) 4.8.1&#34;
-        .section        .note.GNU-stack,&#34;&#34;,@progbits
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">        .file   &#34;010-mstore.c&#34;
+</span></span><span class="line"><span class="cl">        .text
+</span></span><span class="line"><span class="cl">        .globl  multstore
+</span></span><span class="line"><span class="cl">        .type   multstore, @function
+</span></span><span class="line"><span class="cl">multstore:
+</span></span><span class="line"><span class="cl">        pushq   %rbx
+</span></span><span class="line"><span class="cl">        movq    %rdx, %rbx
+</span></span><span class="line"><span class="cl">        call    mult2
+</span></span><span class="line"><span class="cl">        movq    %rax, (%rbx)
+</span></span><span class="line"><span class="cl">        popq    %rbx
+</span></span><span class="line"><span class="cl">        ret
+</span></span><span class="line"><span class="cl">        .size   multstore, .-multstore
+</span></span><span class="line"><span class="cl">        .ident  &#34;GCC: (Ubuntu 4.8.1-2ubuntu1~12.04) 4.8.1&#34;
+</span></span><span class="line"><span class="cl">        .section        .note.GNU-stack,&#34;&#34;,@progbits
+</span></span></code></pre></td></tr></table>
 </div>
-</div><p>所有以'.&lsquo;开头的行都是指导汇编器和链接器工作的伪指令，通常可忽略。
+</div><p>所有以&rsquo;.&lsquo;开头的行都是指导汇编器和链接器工作的伪指令，通常可忽略。
 为了更清楚地说明汇编代码，我们使用下面这种格式：
 <img
         class="lazyload"
@@ -465,9 +465,9 @@ multstore:
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">subq $8,%rsp       // Decrement stack pointer
-movq %rbp,(%rsp)   // Store %rbp on stack
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">subq $8,%rsp       // Decrement stack pointer
+</span></span><span class="line"><span class="cl">movq %rbp,(%rsp)   // Store %rbp on stack
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>区别在于机器代码中pushq指令编码为1个字节，而上面两条指令一共需要8个字节。</p>
 <p>弹出一个四字的操作包括从栈顶位置读出数据，然后将栈指针加8。因此，指令<code>popq %rax</code>等价于下面两条指令：</p>
@@ -477,9 +477,9 @@ movq %rbp,(%rsp)   // Store %rbp on stack
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">movq (%rsp),%rax   // Read %rax from stack
-addq $8,%rsp       // Increment stack pointer
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">movq (%rsp),%rax   // Read %rax from stack
+</span></span><span class="line"><span class="cl">addq $8,%rsp       // Increment stack pointer
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>%rsp</code>指向的地址总是栈顶。</p>
 <h2 id="35-算数和逻辑操作">3.5 算数和逻辑操作</h2>
@@ -621,11 +621,11 @@ addq $8,%rsp       // Increment stack pointer
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">if (test-expr)
-    then-statement
-else
-    else-statement
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">if (test-expr)
+</span></span><span class="line"><span class="cl">    then-statement
+</span></span><span class="line"><span class="cl">else
+</span></span><span class="line"><span class="cl">    else-statement
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>对于这种通用形式，汇编实现通常会使用下面这种形式（这里用C语法描述）：</p>
 <div class="highlight"><div class="chroma">
@@ -640,15 +640,15 @@ else
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">    t = test-expr;
-    if (!t)
-        goto false;
-    then-statement
-    goto done;
-false:
-    else-statement;
-done:
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    t = test-expr;
+</span></span><span class="line"><span class="cl">    if (!t)
+</span></span><span class="line"><span class="cl">        goto false;
+</span></span><span class="line"><span class="cl">    then-statement
+</span></span><span class="line"><span class="cl">    goto done;
+</span></span><span class="line"><span class="cl">false:
+</span></span><span class="line"><span class="cl">    else-statement;
+</span></span><span class="line"><span class="cl">done:
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>也就是，汇编为<code>then-statement</code>和<code>else-statement</code>产生各自的代码块。它会插入条件和无条件分支，以保证能执行正确的代码块。</p>
 <h3 id="366-用条件传送来实现条件分支">3.6.6 用条件传送来实现条件分支</h3>
@@ -678,8 +678,8 @@ done:
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">v = test-expr ? then-expr : else-expr;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">v = test-expr ? then-expr : else-expr;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>用conditional control transfer的标准方法来编译这个表达式，会得到如下形式：</p>
 <div class="highlight"><div class="chroma">
@@ -693,14 +693,14 @@ done:
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">    if (!test-expr)
-        goto false;
-    v = then-expr;
-    goto done;
-false:
-    v = else-expr;
-done:
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    if (!test-expr)
+</span></span><span class="line"><span class="cl">        goto false;
+</span></span><span class="line"><span class="cl">    v = then-expr;
+</span></span><span class="line"><span class="cl">    goto done;
+</span></span><span class="line"><span class="cl">false:
+</span></span><span class="line"><span class="cl">    v = else-expr;
+</span></span><span class="line"><span class="cl">done:
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>基于conditional control的代码，会对<code>then-expr</code>和<code>else-expr</code>都求值，最终值的选择基于对<code>test-expr</code>的求值。可以用下面的抽象代码描述：</p>
 <div class="highlight"><div class="chroma">
@@ -711,11 +711,11 @@ done:
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">v = then-expr
-ve = else-expr
-t = test-expr
-if (!t) v = ve
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">v = then-expr
+</span></span><span class="line"><span class="cl">ve = else-expr
+</span></span><span class="line"><span class="cl">t = test-expr
+</span></span><span class="line"><span class="cl">if (!t) v = ve
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个序列中的最后一条语句是用conditional move实现的&ndash;只有当测试条件<code>t</code>满足时，<code>vt</code>的值才会被复制到<code>v</code>中。</p>
 <p>不是所有的条件表达式都可以用conditional move来编译。因为要对<code>then-expr</code>和<code>else-expr</code>都求值，所以如果其中任意一个表达式可能产生错误条件或者副作用，就会导致非法的行为。3.6.5中的例子就是这种情况。</p>
@@ -732,10 +732,10 @@ if (!t) v = ve
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">do
-    body-statement
-    while (test-expr);
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">do
+</span></span><span class="line"><span class="cl">    body-statement
+</span></span><span class="line"><span class="cl">    while (test-expr);
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>这种通用形式可以被翻译成：</p>
 <div class="highlight"><div class="chroma">
@@ -747,12 +747,12 @@ if (!t) v = ve
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">loop:
-    body-statement
-    t = test-expr;
-    if (t)
-        goto loop;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">loop:
+</span></span><span class="line"><span class="cl">    body-statement
+</span></span><span class="line"><span class="cl">    t = test-expr;
+</span></span><span class="line"><span class="cl">    if (t)
+</span></span><span class="line"><span class="cl">        goto loop;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><img
         class="lazyload"
@@ -770,9 +770,9 @@ if (!t) v = ve
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">while (test-expr)
-    body-statement
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">while (test-expr)
+</span></span><span class="line"><span class="cl">    body-statement
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>第一种翻译方法，我们称之为跳转到中间(jump into middle)。它执行一个无条件跳转跳到循环结尾处的测试，以此来执行初始的测试。</p>
 <div class="highlight"><div class="chroma">
@@ -786,14 +786,14 @@ if (!t) v = ve
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">    goto test;
-loop:
-    body-statement
-test:
-    t = test-expr
-    if (t)
-        goto loop;
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">    goto test;
+</span></span><span class="line"><span class="cl">loop:
+</span></span><span class="line"><span class="cl">    body-statement
+</span></span><span class="line"><span class="cl">test:
+</span></span><span class="line"><span class="cl">    t = test-expr
+</span></span><span class="line"><span class="cl">    if (t)
+</span></span><span class="line"><span class="cl">        goto loop;
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><img
         class="lazyload"
@@ -815,14 +815,14 @@ test:
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">t = test-expr
-if (!t)
-    goto done;
-do
-    body-statement
-    while (test-expr);
-done:
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">t = test-expr
+</span></span><span class="line"><span class="cl">if (!t)
+</span></span><span class="line"><span class="cl">    goto done;
+</span></span><span class="line"><span class="cl">do
+</span></span><span class="line"><span class="cl">    body-statement
+</span></span><span class="line"><span class="cl">    while (test-expr);
+</span></span><span class="line"><span class="cl">done:
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>还可以把它翻译成goto代码：</p>
 <div class="highlight"><div class="chroma">
@@ -838,16 +838,16 @@ done:
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">t = test-expr
-if (!t)
-    goto done;
-loop:
-    body-statement
-    t = test-expr
-    if (t)
-        goto loop;
-done:
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">t = test-expr
+</span></span><span class="line"><span class="cl">if (!t)
+</span></span><span class="line"><span class="cl">    goto done;
+</span></span><span class="line"><span class="cl">loop:
+</span></span><span class="line"><span class="cl">    body-statement
+</span></span><span class="line"><span class="cl">    t = test-expr
+</span></span><span class="line"><span class="cl">    if (t)
+</span></span><span class="line"><span class="cl">        goto loop;
+</span></span><span class="line"><span class="cl">done:
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>利用这种实现策略，编译器常常可以优化初始的测试，例如认为测试条件总是满足。</p>
 <p><img
@@ -866,9 +866,9 @@ done:
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">for (init-expr; test-expr; update-expr)
-    body-statement
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">for (init-expr; test-expr; update-expr)
+</span></span><span class="line"><span class="cl">    body-statement
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>大部分情况下，都可以等价为使用while循环：</p>
 <div class="highlight"><div class="chroma">
@@ -880,12 +880,12 @@ done:
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">init-expr
-while (test-expr) {
-    body-statement
-    update-expr
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">init-expr
+</span></span><span class="line"><span class="cl">while (test-expr) {
+</span></span><span class="line"><span class="cl">    body-statement
+</span></span><span class="line"><span class="cl">    update-expr
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>GCC为<code>for</code>循环产生的代码是<code>while</code>循环的两种翻译之一，这取决于优化的等级。</p>
 <h3 id="368-switch语句">3.6.8 switch语句</h3>
@@ -1032,7 +1032,7 @@ while (test-expr) {
 <li><strong>每个指针都对应一个类型</strong></li>
 <li><strong>每个指针都有一个值</strong></li>
 <li><strong>指针用&rsquo;&amp;&lsquo;运算符创建</strong></li>
-<li><strong>'*&lsquo;操作符用于间接引用指针</strong></li>
+<li><strong>&rsquo;*&lsquo;操作符用于间接引用指针</strong></li>
 <li><strong>数组与指针紧密联系</strong></li>
 <li><strong>将指针从一种类型强制转换成另一种类型，只改变它的类型，而不改变它的值</strong></li>
 <li><strong>指针也可以指向函数</strong></li>
@@ -1088,9 +1088,9 @@ while (test-expr) {
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"> movq %rbp, %rsp # set stack pointer to beginning of frame
- popq %rbp       # restore saved %rbp and set stack ptr to end of the caller&#39;s frame
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"> movq %rbp, %rsp # set stack pointer to beginning of frame
+</span></span><span class="line"><span class="cl"> popq %rbp       # restore saved %rbp and set stack ptr to end of the caller&#39;s frame
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="311-浮点代码">3.11 浮点代码</h2>
 <p>简要回顾历史会对理解x86-64浮点体系结构有所帮助。1997年出现了Pentium/MMX，Intel和AMD都引入了持续数代的用于支持图形和图像处理的媒体(media)指令。这些指令本意是允许多个操作以并行模式执行，称为<strong>single instruction, multiple data</strong>，或<strong>SIMD(读作sim-dee)</strong>。在这种模式中，可以对多个不同的数据并行执行同一个操作。
@@ -1184,8 +1184,8 @@ while (test-expr) {
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.96.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 

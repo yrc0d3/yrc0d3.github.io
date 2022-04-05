@@ -34,7 +34,7 @@
                 "url": "https:\/\/yrc0d3.github.io\/cover.png",
                 "width":  800 ,
                 "height":  600 
-            },"genre": "posts","keywords": "golang","wordcount":  5864 ,
+            },"genre": "posts","keywords": "golang","wordcount":  5860 ,
         "url": "https:\/\/yrc0d3.github.io\/golang_string\/","datePublished": "2020-05-24T23:18:42+08:00","dateModified": "2020-05-24T23:18:42+08:00","publisher": {
                 "@type": "Organization",
                 "name": "xxxx",
@@ -118,7 +118,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">聊聊Golang中的字符串</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/"><i class="far fa-folder fa-fw"></i>编程语言</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-05-24">2020-05-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5864 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-05-24">2020-05-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5860 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -164,19 +164,17 @@
 </span><span class="lnt">6
 </span><span class="lnt">7
 </span><span class="lnt">8
-</span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">
-type StringHeader struct {
-
-    Data uintptr
-
-    Len int
-
-}
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type StringHeader struct {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Data uintptr
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Len int
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>对比一下slice的结构，可以发现它们非常相似。</p>
 <div class="highlight"><div class="chroma">
@@ -191,21 +189,19 @@ type StringHeader struct {
 </span><span class="lnt"> 8
 </span><span class="lnt"> 9
 </span><span class="lnt">10
-</span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">
-type SliceHeader struct {
-
-    Data uintptr
-
-    Len int
-
-    Cap int
-
-}
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type SliceHeader struct {
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Data uintptr
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Len int
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Cap int
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>string比slice少了一个<code>Cap</code>字段，因为string是只读的。</p>
 <p><code>Data</code>字段是个指针，指向底层的字节序列。</p>
@@ -220,13 +216,13 @@ type SliceHeader struct {
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">s1 := &#34;hello world&#34;
-s2 := s1
-s3 := s1[:5]
-x1 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s1))
-x2 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s2))
-x3 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s3))
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">s1 := &#34;hello world&#34;
+</span></span><span class="line"><span class="cl">s2 := s1
+</span></span><span class="line"><span class="cl">s3 := s1[:5]
+</span></span><span class="line"><span class="cl">x1 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s1))
+</span></span><span class="line"><span class="cl">x2 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s2))
+</span></span><span class="line"><span class="cl">x3 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s3))
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>上面的代码中，<code>&amp;s1</code>和<code>&amp;s2</code>是不相等的，但是<code>x1.Data</code>和<code>x2.Data</code>是相等的。当我们使用语法<code>aString[start:end]</code>来获取子串的时候，也会共享底层的字节序列，因此<code>x1.Data</code>和<code>x3.Data</code>是相等的。</p>
 <h2 id="stringunicodeutf8rune">string、unicode、utf8、rune</h2>
@@ -266,31 +262,29 @@ x3 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s3))
 </span><span class="lnt">18
 </span><span class="lnt">19
 </span><span class="lnt">20
-</span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">
-<span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-
-    <span class="nx">s</span> <span class="o">:=</span> <span class="s">&#34;Hello, 世界&#34;</span>
-
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span>
-
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
-
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">)))</span>
-
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">rune</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
-
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">([]</span><span class="nb">rune</span><span class="p">(</span><span class="nx">s</span><span class="p">)))</span>
-
-<span class="p">}</span>
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">s</span> <span class="o">:=</span> <span class="s">&#34;Hello, 世界&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="p">[]</span><span class="nb">rune</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nb">string</span><span class="p">([]</span><span class="nb">rune</span><span class="p">(</span><span class="nx">s</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>它的结果如下</p>
 <div class="highlight"><div class="chroma">
@@ -305,21 +299,19 @@ x3 := (*reflect.StringHeader)(unsafe.Pointer(&amp;s3))
 </span><span class="lnt"> 8
 </span><span class="lnt"> 9
 </span><span class="lnt">10
-</span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">
-Hello, 世界
-
-[72 101 108 108 111 44 32 228 184 150 231 149 140]
-
-Hello, 世界
-
-[72 101 108 108 111 44 32 19990 30028]
-
-Hello, 世界
-
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Hello, 世界
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[72 101 108 108 111 44 32 228 184 150 231 149 140]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Hello, 世界
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[72 101 108 108 111 44 32 19990 30028]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Hello, 世界
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>需要注意的是，以上的类型转换都会发生内存拷贝。因此在高并发场景下，使用这些强制类型转换，性能上会比较差。</p>
 <ul>
@@ -359,21 +351,21 @@ Hello, 世界
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">BenchmarkJoin10-4                                9577982               125 ns/op             112 B/op          1 allocs/op
-BenchmarkSprintf10-4                             4068709               297 ns/op             112 B/op          1 allocs/op
-BenchmarkConcat10-4                              2534871               482 ns/op             608 B/op          9 allocs/op
-BenchmarkBytesBuffer10-4                         4680453               255 ns/op             320 B/op          3 allocs/op
-BenchmarkBytesBufferWithGrow10-4                 5702677               218 ns/op             224 B/op          2 allocs/op
-BenchmarkStringBuilder10-4                       6260330               193 ns/op             240 B/op          4 allocs/op
-BenchmarkStringBuilderWithGrow10-4              13437114              86.7 ns/op             112 B/op          1 allocs/op
-BenchmarkJoin10000-4                               10000            109380 ns/op          106693 B/op          1 allocs/op
-BenchmarkSprintf10000-4                             3282            335898 ns/op          629595 B/op         25 allocs/op
-BenchmarkConcat10000-4                                16          68492777 ns/op        531099348 B/op     10015 allocs/op
-BenchmarkBytesBuffer10000-4                         8527            143114 ns/op          423706 B/op         13 allocs/op
-BenchmarkBytesBufferWithGrow10000-4                10000            101874 ns/op          213143 B/op          2 allocs/op
-BenchmarkStringBuilder10000-4                       8168            133852 ns/op          522409 B/op         23 allocs/op
-BenchmarkStringBuilderWithGrow10000-4              19359             60950 ns/op          106591 B/op          1 allocs/op
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">BenchmarkJoin10-4                                9577982               125 ns/op             112 B/op          1 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkSprintf10-4                             4068709               297 ns/op             112 B/op          1 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkConcat10-4                              2534871               482 ns/op             608 B/op          9 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkBytesBuffer10-4                         4680453               255 ns/op             320 B/op          3 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkBytesBufferWithGrow10-4                 5702677               218 ns/op             224 B/op          2 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkStringBuilder10-4                       6260330               193 ns/op             240 B/op          4 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkStringBuilderWithGrow10-4              13437114              86.7 ns/op             112 B/op          1 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkJoin10000-4                               10000            109380 ns/op          106693 B/op          1 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkSprintf10000-4                             3282            335898 ns/op          629595 B/op         25 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkConcat10000-4                                16          68492777 ns/op        531099348 B/op     10015 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkBytesBuffer10000-4                         8527            143114 ns/op          423706 B/op         13 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkBytesBufferWithGrow10000-4                10000            101874 ns/op          213143 B/op          2 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkStringBuilder10000-4                       8168            133852 ns/op          522409 B/op         23 allocs/op
+</span></span><span class="line"><span class="cl">BenchmarkStringBuilderWithGrow10000-4              19359             60950 ns/op          106591 B/op          1 allocs/op
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>（PS：如果选取的测试字符串太短的话，有可能会被golang优化到没有内存分配。上面的测试选择的字符串长度适中，能够避开golang对短字符串拼接的优化。）</p>
 <p>从中我们可以看出，Join、BytesBufferWithGrow和StringBuilderWithGrow是性能最好的，耗时短且内存分配少。下面逐个分析一下。</p>
@@ -395,14 +387,14 @@ BenchmarkStringBuilderWithGrow10000-4              19359             60950 ns/op
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">func Sprintf(format string, a ...interface{}) string {
-	p := newPrinter()
-	p.doPrintf(format, a)
-	s := string(p.buf)
-	p.free()
-	return s
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func Sprintf(format string, a ...interface{}) string {
+</span></span><span class="line"><span class="cl">	p := newPrinter()
+</span></span><span class="line"><span class="cl">	p.doPrintf(format, a)
+</span></span><span class="line"><span class="cl">	s := string(p.buf)
+</span></span><span class="line"><span class="cl">	p.free()
+</span></span><span class="line"><span class="cl">	return s
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p><code>fmt.Sprintf</code>的内部实现中，通过<code>newPrinter</code>函数创建了工具类<code>fmt.pp</code>(维护打印状态)，通过其<code>doPrintf</code>函数来完成字符串的拼接。<code>p.doPrintf</code>函数中的主要原理就是遍历<code>format</code>字符串，找到其中的<code>%</code>，然后根据后面的动词将对应的参数变量转换成字符串，然后继续遍历直到结束。</p>
 <p><code>p.doPrintf</code>函数内部最终是通过<code>p.buf.writeString</code>来拼接字符串。其代码如下：</p>
@@ -416,13 +408,13 @@ BenchmarkStringBuilderWithGrow10000-4              19359             60950 ns/op
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// Use simple []byte instead of bytes.Buffer to avoid large dependency.
-type buffer []byte
-
-func (b *buffer) writeString(s string) {
-	*b = append(*b, s...)
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// Use simple []byte instead of bytes.Buffer to avoid large dependency.
+</span></span><span class="line"><span class="cl">type buffer []byte
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func (b *buffer) writeString(s string) {
+</span></span><span class="line"><span class="cl">	*b = append(*b, s...)
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>因此，其内存分配次数是取决于slice的grow策略的。</p>
 <h3 id="bytesbuffer">bytes.Buffer</h3>
@@ -436,12 +428,12 @@ func (b *buffer) writeString(s string) {
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">type Buffer struct {
-	buf      []byte // contents are the bytes buf[off : len(buf)]
-	off      int    // read at &amp;buf[off], write at &amp;buf[len(buf)]
-	lastRead readOp // last read operation, so that Unread* can work correctly.
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Buffer struct {
+</span></span><span class="line"><span class="cl">	buf      []byte // contents are the bytes buf[off : len(buf)]
+</span></span><span class="line"><span class="cl">	off      int    // read at &amp;buf[off], write at &amp;buf[len(buf)]
+</span></span><span class="line"><span class="cl">	lastRead readOp // last read operation, so that Unread* can work correctly.
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>测试中的<code>BytesBufferWithGrow</code>和<code>BytesBuffer</code>唯一的区别就是<code>BytesBufferWithGrow</code>会提前调用<code>grow</code>函数分配足够长度的内存。通过其测试结果对比可以看出，此举能够提升性能。</p>
 <h3 id="stringsbuilder">strings.Builder</h3>
@@ -455,11 +447,11 @@ func (b *buffer) writeString(s string) {
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">type Builder struct {
-	addr *Builder // of receiver, to detect copies by value
-	buf  []byte
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">type Builder struct {
+</span></span><span class="line"><span class="cl">	addr *Builder // of receiver, to detect copies by value
+</span></span><span class="line"><span class="cl">	buf  []byte
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>从测试结果中可以看出，虽然底层实现都是byte slice，但在提前使用<code>grow</code>函数申请内存的场景下，<code>strings.Builder</code>比<code>bytes.Buffer</code>要少了一次内存分配，性能也更好一些。原因在于我们最后都调用了它们的<code>String</code>方法来获取最终的字符串。<code>bytes.Buffer</code>的<code>String</code>方法会将byte slice强制转换成string，结合文章前面的内容我们知道，这一步是要进行内存拷贝的。而<code>strings.Builder</code>的<code>string</code>方法使用了<code>unsafe.Pointer</code>来将byte slice转换成string，避免了内存拷贝。</p>
 <div class="highlight"><div class="chroma">
@@ -477,18 +469,18 @@ func (b *buffer) writeString(s string) {
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">func (b *Buffer) String() string {
-	if b == nil {
-		// Special case, useful in debugging.
-		return &#34;&lt;nil&gt;&#34;
-	}
-	return string(b.buf[b.off:])
-}
-
-func (b *Builder) String() string {
-	return *(*string)(unsafe.Pointer(&amp;b.buf))
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func (b *Buffer) String() string {
+</span></span><span class="line"><span class="cl">	if b == nil {
+</span></span><span class="line"><span class="cl">		// Special case, useful in debugging.
+</span></span><span class="line"><span class="cl">		return &#34;&lt;nil&gt;&#34;
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	return string(b.buf[b.off:])
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func (b *Builder) String() string {
+</span></span><span class="line"><span class="cl">	return *(*string)(unsafe.Pointer(&amp;b.buf))
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="stringsjoin">strings.Join</h3>
 <p>其内部实现使用了<code>strings.Builder</code>，并在开始就通过<code>Grow</code>函数预分配了待拼接字符串长度和的内存，因此性能很好。</p>
@@ -513,19 +505,19 @@ func (b *Builder) String() string {
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">ha := a
-for hv1 := 0; hv1 &lt; len(ha); {
-    hv1t := hv1
-    hv2 := rune(ha[hv1])
-    if hv2 &lt; utf8.RuneSelf {
-       hv1++
-    } else {
-       hv2, hv1 = decoderune(ha, hv1)
-    }
-    v1, v2 = hv1t, hv2
-    // original body
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ha := a
+</span></span><span class="line"><span class="cl">for hv1 := 0; hv1 &lt; len(ha); {
+</span></span><span class="line"><span class="cl">    hv1t := hv1
+</span></span><span class="line"><span class="cl">    hv2 := rune(ha[hv1])
+</span></span><span class="line"><span class="cl">    if hv2 &lt; utf8.RuneSelf {
+</span></span><span class="line"><span class="cl">       hv1++
+</span></span><span class="line"><span class="cl">    } else {
+</span></span><span class="line"><span class="cl">       hv2, hv1 = decoderune(ha, hv1)
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">    v1, v2 = hv1t, hv2
+</span></span><span class="line"><span class="cl">    // original body
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>当我们使用下标的方式来遍历字符串时，像<code>for i = 0; i &lt; len(s); i++ {}</code>，<code>s[i]</code>是byte类型的变量，这种情况就是把字符串当作是字节数组来使用了。</p>
 <h2 id="字符串比较">字符串比较</h2>
@@ -546,14 +538,14 @@ for hv1 := 0; hv1 &lt; len(ha); {
 </span><span class="lnt">7
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// 可以被intern，底层字节序列地址相同
-s1 := &#34;12&#34;
-s2 := &#34;1&#34;+&#34;2&#34;
-
-// 不能被intern，底层字节序列地址不同
-s3 := &#34;12&#34;
-s4 := strconv.Itoa(12)
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 可以被intern，底层字节序列地址相同
+</span></span><span class="line"><span class="cl">s1 := &#34;12&#34;
+</span></span><span class="line"><span class="cl">s2 := &#34;1&#34;+&#34;2&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">// 不能被intern，底层字节序列地址不同
+</span></span><span class="line"><span class="cl">s3 := &#34;12&#34;
+</span></span><span class="line"><span class="cl">s4 := strconv.Itoa(12)
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>了解这些之后，我们可以想办法绕过限制，在运行时手动完成字符串内部化。一个简单的实现如下：</p>
 <div class="highlight"><div class="chroma">
@@ -590,37 +582,37 @@ s4 := strconv.Itoa(12)
 </span><span class="lnt">30
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;reflect&#34;</span>
-	<span class="s">&#34;strconv&#34;</span>
-	<span class="s">&#34;unsafe&#34;</span>
-<span class="p">)</span>
-
-<span class="c1">// stringptr returns a pointer to the string data.
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">stringptr</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">uintptr</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">StringHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">)).</span><span class="nx">Data</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">stringInterner</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">si</span> <span class="nx">stringInterner</span><span class="p">)</span> <span class="nf">Intern</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
-	<span class="k">if</span> <span class="nx">interned</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">[</span><span class="nx">s</span><span class="p">];</span> <span class="nx">ok</span> <span class="p">{</span>
-		<span class="k">return</span> <span class="nx">interned</span>
-	<span class="p">}</span>
-	<span class="nx">si</span><span class="p">[</span><span class="nx">s</span><span class="p">]</span> <span class="p">=</span> <span class="nx">s</span>
-	<span class="k">return</span> <span class="nx">s</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">si</span> <span class="o">:=</span> <span class="nx">stringInterner</span><span class="p">{}</span>
-	<span class="nx">s1</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">.</span><span class="nf">Intern</span><span class="p">(</span><span class="s">&#34;12&#34;</span><span class="p">)</span>
-	<span class="nx">s2</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">.</span><span class="nf">Intern</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nf">stringptr</span><span class="p">(</span><span class="nx">s1</span><span class="p">)</span> <span class="o">==</span> <span class="nf">stringptr</span><span class="p">(</span><span class="nx">s2</span><span class="p">))</span> <span class="c1">// true
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;reflect&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;strconv&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;unsafe&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// stringptr returns a pointer to the string data.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">stringptr</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">uintptr</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">StringHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">)).</span><span class="nx">Data</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">stringInterner</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">si</span> <span class="nx">stringInterner</span><span class="p">)</span> <span class="nf">Intern</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">interned</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">[</span><span class="nx">s</span><span class="p">];</span> <span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">interned</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">si</span><span class="p">[</span><span class="nx">s</span><span class="p">]</span> <span class="p">=</span> <span class="nx">s</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">s</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">si</span> <span class="o">:=</span> <span class="nx">stringInterner</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s1</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">.</span><span class="nf">Intern</span><span class="p">(</span><span class="s">&#34;12&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s2</span> <span class="o">:=</span> <span class="nx">si</span><span class="p">.</span><span class="nf">Intern</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nf">stringptr</span><span class="p">(</span><span class="nx">s1</span><span class="p">)</span> <span class="o">==</span> <span class="nf">stringptr</span><span class="p">(</span><span class="nx">s2</span><span class="p">))</span> <span class="c1">// true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>其原理很简单，就是自己维护一个字符串的池子，在程序中只使用池子中的字符串。在缓存类的应用中，使用该技术可以节省很多内存空间。</p>
 <p>golang在net包中也使用了该技术：</p>
@@ -644,23 +636,23 @@ s4 := strconv.Itoa(12)
 </span><span class="lnt">16
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">// commonHeader interns common header strings.
-var commonHeader map[string]string
-
-var commonHeaderOnce sync.Once
-
-func initCommonHeader() {
-	commonHeader = make(map[string]string)
-	for _, v := range []string{
-		&#34;Accept&#34;,
-		&#34;Accept-Charset&#34;,
-		&#34;Accept-Encoding&#34;,
-		// ...
-	} {
-		commonHeader[v] = v
-	}
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// commonHeader interns common header strings.
+</span></span><span class="line"><span class="cl">var commonHeader map[string]string
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">var commonHeaderOnce sync.Once
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func initCommonHeader() {
+</span></span><span class="line"><span class="cl">	commonHeader = make(map[string]string)
+</span></span><span class="line"><span class="cl">	for _, v := range []string{
+</span></span><span class="line"><span class="cl">		&#34;Accept&#34;,
+</span></span><span class="line"><span class="cl">		&#34;Accept-Charset&#34;,
+</span></span><span class="line"><span class="cl">		&#34;Accept-Encoding&#34;,
+</span></span><span class="line"><span class="cl">		// ...
+</span></span><span class="line"><span class="cl">	} {
+</span></span><span class="line"><span class="cl">		commonHeader[v] = v
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="结语">结语</h2>
 <p>结合以上内容，就可以解决文章开头遇到的问题。在将redis中的k线字符串转换为结构体的时候，结构体引用了字符串split之后的第一个表示日期的子串，因此导致原始字符串的底层的字节序列未被回收，一直驻留在内存中。使用字符串内部化技术，可以很简单的解决问题，同时减少内存占用。</p>
@@ -697,35 +689,35 @@ func initCommonHeader() {
 </span><span class="lnt">28
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback">func Split(s, sep string) []string { return genSplit(s, sep, 0, -1) }
-
-func genSplit(s, sep string, sepSave, n int) []string {
-	if n == 0 {
-		return nil
-	}
-	if sep == &#34;&#34; {
-		return explode(s, n)
-	}
-	if n &lt; 0 {
-		n = Count(s, sep) + 1
-	}
-
-	a := make([]string, n)
-	n--
-	i := 0
-	for i &lt; n {
-		m := Index(s, sep)
-		if m &lt; 0 {
-			break
-		}
-		a[i] = s[:m+sepSave]
-		s = s[m+len(sep):]
-		i++
-	}
-	a[i] = s
-	return a[:i+1]
-}
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">func Split(s, sep string) []string { return genSplit(s, sep, 0, -1) }
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">func genSplit(s, sep string, sepSave, n int) []string {
+</span></span><span class="line"><span class="cl">	if n == 0 {
+</span></span><span class="line"><span class="cl">		return nil
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	if sep == &#34;&#34; {
+</span></span><span class="line"><span class="cl">		return explode(s, n)
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	if n &lt; 0 {
+</span></span><span class="line"><span class="cl">		n = Count(s, sep) + 1
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	a := make([]string, n)
+</span></span><span class="line"><span class="cl">	n--
+</span></span><span class="line"><span class="cl">	i := 0
+</span></span><span class="line"><span class="cl">	for i &lt; n {
+</span></span><span class="line"><span class="cl">		m := Index(s, sep)
+</span></span><span class="line"><span class="cl">		if m &lt; 0 {
+</span></span><span class="line"><span class="cl">			break
+</span></span><span class="line"><span class="cl">		}
+</span></span><span class="line"><span class="cl">		a[i] = s[:m+sepSave]
+</span></span><span class="line"><span class="cl">		s = s[m+len(sep):]
+</span></span><span class="line"><span class="cl">		i++
+</span></span><span class="line"><span class="cl">	}
+</span></span><span class="line"><span class="cl">	a[i] = s
+</span></span><span class="line"><span class="cl">	return a[:i+1]
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>在<code>strings.Split</code>之后，我们能够获取一个字符串数组，暂命名其为<code>kFields</code>。然后将<code>kFields</code>的各个值分别赋给结构体的各个字段。<code>kFields[0]</code>是日期，仍然被保留为string类型。其他字段都需要进行到数字的转换。因此，只有<code>kFields[0]</code>一直被引用着，也就导致原始字符串的底层字节序列一直被引用，无法被垃圾回收，也就一直占用着内存。通过内部化技术解除对<code>kFields[0]</code>的引用之后，原始字符串的底层字节序列也可以被回收掉了，内存占用也就降下来了。</p>
 <p>以上就是笔者通过实际问题，逐渐深入内部原理，然后对golang中字符串的相关内容进行的梳理。如有错误之处，敬请指正。</p>
@@ -783,8 +775,8 @@ func genSplit(s, sep string, sepSave, n int) []string {
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.96.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 

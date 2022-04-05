@@ -34,7 +34,7 @@
                 "url": "https:\/\/yrc0d3.github.io\/cover.png",
                 "width":  800 ,
                 "height":  600 
-            },"genre": "posts","keywords": "caspp","wordcount":  1971 ,
+            },"genre": "posts","keywords": "caspp","wordcount":  1967 ,
         "url": "https:\/\/yrc0d3.github.io\/csapp_chapter2\/","datePublished": "2019-12-05T22:35:26+08:00","dateModified": "2019-12-05T22:35:26+08:00","publisher": {
                 "@type": "Organization",
                 "name": "xxxx",
@@ -118,7 +118,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">[CSAPP]第二章 信息的表示和处理</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>读书笔记</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-12-05">2019-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1971 字&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-12-05">2019-12-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1967 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -263,8 +263,8 @@
         title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_2_4_2_float_categories.png" /></p>
 <p>情况1：规格化的值
 当exp的位模式不全为0且不全为1时，这是最普遍的情况。
-阶码被解释为以**偏置(biased)**形式表示的有符号整数，即 $E=e-Bias$ ，其中 $e$ 是具有 ${e_{k-1}}{···}{e_1}{e_0}$ 位表示的无符号整数，而 $Bias$ 是一个等于 $2^{k-1} - 1$ (单精度是127，双精度是1023)的偏置值。由此产生的取值范围，对于单精度float是-126~+127，对于双精度double是-1022~+1023。
-小数字段frac被解释为描述小数值 $f$ ，其中 $0 \leqslant f &lt; 1$ ，其二进制表示为 $0.{f_{n-1}···{f_1}{f_0}}$ ，也就是二进制小数点在最高有效位的左边。尾数定义为 $M=1+f$ ，这种方式也叫做**隐含的以1开头的(implied leading 1)**表示，因为我们可以把 $M$ 看成一个二进制表达式为 $1.{f_{n-1}···{f_1}{f_0}}$ 的数字。我们可以通过调整 $E$ 来使得尾数 $M$ 保持在 $1 \leqslant M &lt; 2$ 范围之中(假设没有溢出)。既然第一位总是1，那么我们就不需要显示地表示它，因此我们也获得了一个额外的精度位。</p>
+阶码被解释为以**偏置(biased)<strong>形式表示的有符号整数，即 $E=e-Bias$ ，其中 $e$ 是具有 ${e_{k-1}}{···}{e_1}{e_0}$ 位表示的无符号整数，而 $Bias$ 是一个等于 $2^{k-1} - 1$ (单精度是127，双精度是1023)的偏置值。由此产生的取值范围，对于单精度float是-126~+127，对于双精度double是-1022~+1023。
+小数字段frac被解释为描述小数值 $f$ ，其中 $0 \leqslant f &lt; 1$ ，其二进制表示为 $0.{f_{n-1}···{f_1}{f_0}}$ ，也就是二进制小数点在最高有效位的左边。尾数定义为 $M=1+f$ ，这种方式也叫做</strong>隐含的以1开头的(implied leading 1)**表示，因为我们可以把 $M$ 看成一个二进制表达式为 $1.{f_{n-1}···{f_1}{f_0}}$ 的数字。我们可以通过调整 $E$ 来使得尾数 $M$ 保持在 $1 \leqslant M &lt; 2$ 范围之中(假设没有溢出)。既然第一位总是1，那么我们就不需要显示地表示它，因此我们也获得了一个额外的精度位。</p>
 <p>情况2：非规格化的数
 阶码域全为0。阶码值是 $E=1-Bias$ ，尾数值是 $M=f$
 非规格化数有两个用途。
@@ -296,7 +296,7 @@
         alt="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_2_4_3_nonnegative_float.png"
         title="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/csapp_2_4_3_nonnegative_float.png" /></p>
 <h3 id="244-舍入">2.4.4 舍入</h3>
-<p>因为表示方法限制了浮点数的范围和精度，所以浮点运算只能近似地表示实数运算。因此，对于值 $x$ ，我们一般想用一种系统的方法，能够找到“最接近的”匹配值 $x^{'}$ ，它可以用期望的浮点形式表示出来。这就是**舍入(rouding)**运算的任务。一个关键问题是在两个可能值的中间确定舍入方向。</p>
+<p>因为表示方法限制了浮点数的范围和精度，所以浮点运算只能近似地表示实数运算。因此，对于值 $x$ ，我们一般想用一种系统的方法，能够找到“最接近的”匹配值 $x^{&rsquo;}$ ，它可以用期望的浮点形式表示出来。这就是**舍入(rouding)**运算的任务。一个关键问题是在两个可能值的中间确定舍入方向。</p>
 <p>IEEE浮点格式定义了四种不同的舍入方式。默认的方法是找到最接近的匹配，其他三种可用于计算上下界。</p>
 <p>向偶数舍入(round-to-even)，也被称为向最接近的值舍入(round-to-nearest)，是默认的方式，试图找到一个最接近的匹配值。它将数字向上或者向下舍入，使得结果的最低有效位数字是偶数。</p>
 <p>向偶数舍入法能够运用到二进制小数上。我们将最低有效位的值0认为是偶数，值1认为是奇数。</p>
@@ -344,8 +344,8 @@
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.86.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.96.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
 

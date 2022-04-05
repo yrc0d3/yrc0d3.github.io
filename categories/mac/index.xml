@@ -1,0 +1,14 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>mac - 分类 - my blog</title>
+        <link>https://yrc0d3.github.io/categories/mac/</link>
+        <description>mac - 分类 - my blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 26 Mar 2022 22:12:11 &#43;0800</lastBuildDate><atom:link href="https://yrc0d3.github.io/categories/mac/" rel="self" type="application/rss+xml" /><item>
+    <title>Apple Silicon M1的Mac电脑安装ubuntu虚拟机</title>
+    <link>https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/</link>
+    <pubDate>Sat, 26 Mar 2022 22:12:11 &#43;0800</pubDate>
+    <author>作者</author>
+    <guid>https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/</guid>
+    <description><![CDATA[为了学习linux内核，安装一个ubuntu虚拟机比较方便。 安装虚拟机软件 Parallel Desktop收费，pass。 VMWare Fusion还是技术预览版。 最终]]></description>
+</item></channel>
+</rss>
