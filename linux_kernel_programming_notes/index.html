@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>《Linux Kernel Programming》读书笔记 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="《Linux Kernel Programming》读书笔记" />
+<meta property="og:description" content="Kernel Workspace Setup 安装虚拟机：[[Apple Silicon M1的Mac电脑安装ubuntu虚拟机 id=7787d9a5-9a6e-4d71-8283-3becf9bd7525]] 安装cross toolchain and QEMU：sudo apt install qemu-system-arm 安装cross compi" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yrc0d3.github.io/linux_kernel_programming_notes/" /><meta property="og:image" content="https://yrc0d3.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-05T22:45:55+08:00" />
+<meta property="article:modified_time" content="2022-04-11T00:20:35+08:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://yrc0d3.github.io/logo.png"/>
+
+<meta name="twitter:title" content="《Linux Kernel Programming》读书笔记"/>
+<meta name="twitter:description" content="Kernel Workspace Setup 安装虚拟机：[[Apple Silicon M1的Mac电脑安装ubuntu虚拟机 id=7787d9a5-9a6e-4d71-8283-3becf9bd7525]] 安装cross toolchain and QEMU：sudo apt install qemu-system-arm 安装cross compi"/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/linux_kernel_programming_notes/" /><link rel="prev" href="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "《Linux Kernel Programming》读书笔记",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/yrc0d3.github.io\/linux_kernel_programming_notes\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/yrc0d3.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","keywords": "linux","wordcount":  5592 ,
+        "url": "https:\/\/yrc0d3.github.io\/linux_kernel_programming_notes\/","datePublished": "2022-04-05T22:45:55+08:00","dateModified": "2022-04-11T00:20:35+08:00","publisher": {
+                "@type": "Organization",
+                "name": "xxxx",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/yrc0d3.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yrc0d3"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="my blog"></a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts"> 文章 </a><a class="menu-item" href="/tags"> 标签 </a><a class="menu-item" href="/categories"> 分类 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="my blog"></a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts" title="">文章</a><a class="menu-item" href="/tags" title="">标签</a><a class="menu-item" href="/categories" title="">分类</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">《Linux Kernel Programming》读书笔记</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>读书笔记</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-05">2022-04-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5592 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#kernel-workspace-setup">Kernel Workspace Setup</a></li>
+    <li><a href="#building-the-5x-linux-kernel-from-source">Building the 5.x Linux Kernel from Source</a></li>
+    <li><a href="#writing-your-first-kernel-module">Writing Your First Kernel Module</a>
+      <ul>
+        <li><a href="#内核构成">内核构成</a></li>
+        <li><a href="#内核模块示例代码">内核模块示例代码</a></li>
+        <li><a href="#常见操作">常见操作</a></li>
+        <li><a href="#kernel-logging和printk">kernel logging和printk</a></li>
+        <li><a href="#kernel-module的makefile">kernel module的Makefile</a></li>
+        <li><a href="#a-better-makefile-template">A &ldquo;Better&rdquo; Makefile template</a></li>
+        <li><a href="#cross-compliing-a-kernel-module">Cross-compliing a kernel module</a></li>
+        <li><a href="#licensing-kernel-module">Licensing kernel module</a></li>
+        <li><a href="#emulating-library-like-features-for-kernel-modules">Emulating &ldquo;library-like&rdquo; features for kernel modules</a>
+          <ul>
+            <li><a href="#performing-library-emulation-via-multiple-source-files">Performing library emulation via multiple source files</a></li>
+            <li><a href="#module-stacking">module stacking</a></li>
+          </ul>
+        </li>
+        <li><a href="#module-parameters">module parameters</a></li>
+        <li><a href="#auto-loading-modules-on-system-boot">auto-loading modules on system boot</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="kernel-workspace-setup">Kernel Workspace Setup</h2>
+<p>安装虚拟机：[[Apple Silicon M1的Mac电脑安装ubuntu虚拟机 id=7787d9a5-9a6e-4d71-8283-3becf9bd7525]]</p>
+<p>安装cross toolchain and QEMU：<code>sudo apt install qemu-system-arm</code></p>
+<p>安装cross compiler：<code>sudo apt install crossbuild-essential-armhf</code></p>
+<p>安装tldr：man的替代品， 文档更友好</p>
+<p>内核官方文档：<a href="https://www.kernel.org/doc/html/latest/" target="_blank" rel="noopener noreffer">https://www.kernel.org/doc/html/latest/</a></p>
+<p>静态分析工具：Sparse、Coccinelle、Smatch、Flawfinder、Cppcheck</p>
+<p>商业静态分析工具：SonarQube、Coverity Scan、Klocwork</p>
+<p>Linux Trace Toolkit next generation（LTTng）：<a href="https://lttng.org/" target="_blank" rel="noopener noreffer">https://lttng.org/</a></p>
+<p>Trace Compass GUI：<a href="https://www.eclipse.org/tracecompass/" target="_blank" rel="noopener noreffer">https://www.eclipse.org/tracecompass/</a></p>
+<p>procmap：<a href="https://github.com/kaiwan/procmap" target="_blank" rel="noopener noreffer">https://github.com/kaiwan/procmap</a> 作者自己的项目，可以查看VAS</p>
+<p>Simple Embedded ARM Linux System（seals）：<a href="https://github.com/kaiwan/seals/" target="_blank" rel="noopener noreffer">https://github.com/kaiwan/seals/</a> 可以制作arm使用的小型linux系统，也是作者自己的项目。</p>
+<p>eBPF：4.0之后的内核可以使用，推荐搭配BCC或bpftrace使用。</p>
+<p>Linux Driver Verification（LDV）：<a href="http://linuxtesting.org/ldv/online?action=rules" target="_blank" rel="noopener noreffer">http://linuxtesting.org/ldv/online?action=rules</a> 包含很多测试规则</p>
+<h2 id="building-the-5x-linux-kernel-from-source">Building the 5.x Linux Kernel from Source</h2>
+<p>通过<code>uname -r</code>可以查看内核版本号。其命名规则：<code>major.minor[.patchlevel][-EXTRAVERSION]</code> ，也常描述为<code>w.x[.y][-z]</code> 。</p>
+<p>内核开发流程：<a href="https://www.kernel.org/doc/html/latest/process/2.Process.html#how-the-development-process-works" target="_blank" rel="noopener noreffer">https://www.kernel.org/doc/html/latest/process/2.Process.html#how-the-development-process-works</a></p>
+<p>整体流程：</p>
+<ol>
+<li>获取源码。两种方式：</li>
+<li>去<a href="https://www.kernel.org/" target="_blank" rel="noopener noreffer">https://www.kernel.org/</a>下载源码。研究源码的话推荐使用这种方式，下载特定版本的代码即可。</li>
+<li>使用git clone。想要贡献源码的话可以使用这种方式。</li>
+<li>解压缩（git clone方式可跳过）。设置环境变量<code>export LLKD_KSRC=${path_to_kernel_src}</code>方便后续操作。</li>
+<li>配置内核编译选项
+<ol>
+<li>每个可配置项<code>FOO</code>都用一个<code>CONFIG_FOO</code> 宏表示。其可选值为y(=yes，直接编译进内核镜像)、m(=module，编译成一个单独的内核模块对象文件)、n(=no，不编译)。</li>
+<li>Kconfig文件中保存了各种<code>CONFIG_FOO</code>的定义。</li>
+<li>真正的内核配置文件是内核源码根目录下的<code>.config</code>文件，一般都是通过Makefile来生成的。</li>
+<li>作者列举了3种配置方式
+<ol>
+<li>使用典型的嵌入式linux系统内核配置，比如树莓派使用的配置是<code>${LLKD_KSRC}/arch/arm/configs/bcm2835_defconfig</code></li>
+<li>使用编译机所使用的发行版的内核配置，直接复制即可。<code>cp /boot/${uname -r} ${LLKD_KSRC}/.config</code></li>
+<li>通过localmodconfig来配置。将localmodconfig作为make的目标，就可以生成仅以正在使用的内核模块为对象的<code>.config</code>文件。这种方法只会启用编译机上已加载的模块，因此能显著减少编译时间。</li>
+</ol>
+</li>
+<li><code>make menuconfig</code>有UI界面，最好用它来修改配置（即<code>.config</code>文件），而不要直接修改<code>.config</code>文件。因为很多配置项会有依赖关系，手动修改容易出错。</li>
+<li>还讲了如何在UI界面中增加配置项，即编辑Kconfig文件。要使其生效还需要修改Makefile。</li>
+</ol>
+</li>
+<li>编译内核镜像和模块
+<ol>
+<li>在<code>${LLKD_KSRC}</code>目录下通过<code>make</code>命令来编译。默认执行的是<code>make all</code>命令，它会编译出来3个重要产出：
+<ol>
+<li><code>vmlinux</code>以及<code>System.map</code>是没有压缩的内核镜像，用于debug。</li>
+<li>modules是一堆<code>.ko</code> 文件，即各种内核模块，散落在各个文件夹中。</li>
+<li>bzImage是压缩后的可启动内核镜像，位于<code>arch/&lt;arch&gt;/boot/</code>目录下。bootloader会把它载入内存，解压后启动。该文件是跟cpu架构相关的，bzImage是x86下的产物，在arm平台(如m1 mac)上的产物则为Image.gz。</li>
+</ol>
+</li>
+<li>使用<code>time make -j4</code>命令可以记录整体时间，以及通过多线程来加速。</li>
+</ol>
+</li>
+<li>安装内核模块。
+<ol>
+<li>在<code>${LLKD_KSRC}</code>目录下通过<code>sudo make modules_install</code>命令来安装，默认安装到<code>/lib/modules/&lt;kernel-ver&gt;</code>下。</li>
+<li>通过环境变量<code>INSTALL_MOD_PATH</code>可以改变安装路径。</li>
+</ol>
+</li>
+<li>安装GRUB bootloader，生成initramfs(init ram filesystem)镜像。
+<ol>
+<li>通过执行<code>sudo make install</code>命令。</li>
+<li>initramfs在2.4及之前的版本中叫做initrd。</li>
+<li>介绍了linux boot过程，可以参考后面的图片。</li>
+</ol>
+</li>
+<li>定制GRUB bootloader
+<ol>
+<li>完成上面的步骤后，重启后默认会使用刚刚编译的内核。想要在GRUB菜单中选择内核的话，就需要定制了。</li>
+<li>通过编辑<code>/etc/default/grub</code>来定制。</li>
+</ol>
+</li>
+</ol>
+<p>linux启动过程的好图：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/linux_boot_stages.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/linux_boot_stages.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/linux_boot_stages.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/linux_boot_stages.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<h2 id="writing-your-first-kernel-module">Writing Your First Kernel Module</h2>
+<h3 id="内核构成">内核构成</h3>
+<p>系统调用system call：是特殊的API，是用户态进程访问内核的唯一合法途径。</p>
+<p>内核主要组件：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_4_2.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_4_2.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_4_2.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_4_2.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>LKM (Loadable Kernel Module) framework：</p>
+<ul>
+<li>
+<p>内核模块是一段可以动态加载进内核的代码。</p>
+</li>
+<li>
+<p>在Linux内核源码树以外来开发并编译一个模块，称为树外开发。</p>
+</li>
+<li>
+<p>之所以提供模块机制，是因为Linux内核本身是一个单内核，单内核由于所有内容都集成在一起， 效率很高，但可扩展性和可维护性较差，模块机制可弥补这一缺陷。</p>
+</li>
+<li>
+<p>2.6之后的内核模块都以<code>.ko</code>(kernel object)结尾。</p>
+</li>
+</ul>
+<p>下图显示的是内核模块的编译，以及插入到内核空间的过程。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_4_3.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_4_3.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_4_3.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_4_3.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<h3 id="内核模块示例代码">内核模块示例代码</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/init.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="n">MODULE_AUTHOR</span><span class="p">(</span><span class="s">&#34;&lt;insert your name here&gt;&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">MODULE_DESCRIPTION</span><span class="p">(</span><span class="s">&#34;LKP book:ch4/helloworld_lkm: hello, world, our first LKM&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;Dual MIT/GPL&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">MODULE_VERSION</span><span class="p">(</span><span class="s">&#34;0.1&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">int</span> <span class="n">__init</span> <span class="nf">helloworld_lkm_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Hello, world</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>               <span class="cm">/* success */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">void</span> <span class="n">__exit</span> <span class="nf">helloworld_lkm_exit</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">printk</span><span class="p">(</span><span class="n">KERN_INFO</span> <span class="s">&#34;Goodbye, world</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">module_init</span><span class="p">(</span><span class="n">helloworld_lkm_init</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">module_exit</span><span class="p">(</span><span class="n">helloworld_lkm_exit</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>构成：</p>
+<ul>
+<li>kernel headers
+<ul>
+<li><code>/lib/modules/$(uname -r)/build</code>是链接，指向系统中内核header的位置。</li>
+<li>对于<code>#include &lt;linux/init.h&gt;</code> ，编译器会去<code>/lib/modules/$(uname -r)/build/include/</code>搜索。</li>
+</ul>
+</li>
+<li>module macros：MODULE_FOO()格式的那些。</li>
+<li>entry and exit points：<code>module_[init|exit]()</code></li>
+<li>return values
+<ul>
+<li><code>static int __init &lt;modulename&gt;_init(void)</code>
+<ul>
+<li>遵循the 0/-E return conversion</li>
+<li>成功返回0</li>
+<li>失败返回负整数，glibc会将其乘以-1后设置为全局的<code>errno</code>。</li>
+<li>init函数返回值只能是int，不方便。想要返回其他类型怎么办？可以通过ERR_PTR、PTR_ERR、IS_ERR方法来hack。</li>
+</ul>
+</li>
+<li><code>static void __exit &lt;modulename&gt;_exit(void)</code></li>
+</ul>
+</li>
+<li><code>__init</code>和<code>__exit</code> 这两个宏是用来标记代码的，方便编译器处理。</li>
+</ul>
+<h3 id="常见操作">常见操作</h3>
+<p>用户空间中glibc的<code>printf</code>，或者c++的<code>cout</code>，在内核中都是无法使用的。内核空间中只能使用<code>printk</code>这个API。</p>
+<p><code>printk</code>会输出到kernel log buffer中，通过<code>dmesg</code>这个shell命令来查看内核日志。</p>
+<p>以下这些命令都是kmod命令的软链接：</p>
+<ul>
+<li>insmod: insert module</li>
+<li>rmmod: remove module</li>
+<li>lsmod: list modules</li>
+<li>modinfo: module info</li>
+<li>modprobe</li>
+<li>depmod</li>
+</ul>
+<p>作者提供了一个叫做lkm的脚本，其整体流程clean/build/load/lsmod/dmesg。</p>
+<h3 id="kernel-logging和printk">kernel logging和printk</h3>
+<p>printk默认输出到内存中的kernel log buffer(volatile)中，也可以额外输出到kernel log file(non-volatile)、console。</p>
+<p>内存中的kernel log buffer是ring buffer，默认大小为$2^{18}=256$KB。</p>
+<p>为解决内存日志的易失性问题，各种linux发行版也会写入文件日志。Red Hat系的写入<code>/var/log/messages</code>，Debian系的写入<code>/var/log/syslog</code>。</p>
+<p>新版本的linux中，会通过<code>systemd-journal</code>这个后台进程来写处理日志。<code>journalctl</code> 是用户接口。日志格式为<code>[timestamp] [hostname] [source]: [... log message ...]</code> 。</p>
+<p>printk支持8种日志级别：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// /lib/modules/$(uname -r)/build/include/linux/kern_levels.h
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define KERN_EMERG      KERN_SOH &#34;0&#34;    </span><span class="cm">/* system is unusable */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define KERN_ALERT      KERN_SOH &#34;1&#34;    </span><span class="cm">/* action must be taken immediately */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define KERN_CRIT       KERN_SOH &#34;2&#34;    </span><span class="cm">/* critical conditions */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define KERN_ERR        KERN_SOH &#34;3&#34;    </span><span class="cm">/* error conditions */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define KERN_WARNING    KERN_SOH &#34;4&#34;    </span><span class="cm">/* warning conditions */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define KERN_NOTICE     KERN_SOH &#34;5&#34;    </span><span class="cm">/* normal but significant condition */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define KERN_INFO       KERN_SOH &#34;6&#34;    </span><span class="cm">/* informational */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define KERN_DEBUG      KERN_SOH &#34;7&#34;    </span><span class="cm">/* debug-level messages */</span><span class="cp">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果使用printk时没有指定log level，那么默认使用KERN_WARNING。</p>
+<p><code>pr_&lt;foo&gt;</code>宏更方便使用。比如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// /lib/modules/$(uname -r)/build/include/linux/printk.h
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define pr_info(fmt, ...) \
+</span></span></span><span class="line"><span class="cl"><span class="cp">        printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>默认情况下，只有KERN_WARNING的更高级别才会打印到console。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ cat /proc/sys/kernel/printk
+</span></span><span class="line"><span class="cl"><span class="m">4</span>    <span class="m">4</span>    <span class="m">1</span>    <span class="m">7</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这四个数字的含义为：</p>
+<ol>
+<li>当前console的日志级别，数字小于该值的日志才会输出到console。</li>
+<li>没有设置log level时的默认级别</li>
+<li>The minimum allowed log level</li>
+<li>The boot-time default log level</li>
+</ol>
+<p>当需要限制printk打印频率时，可以用<code>printk_ratelimited</code>这个宏（实际上是调用了<code>lib/ratelimit.c:__ratelimit()</code>），它默认允许在5s内最多打印10条相同的消息出来。对应的，也有<code>pr_&lt;foo&gt;_ratelimited</code>这种宏，如<code>pr_info_ratelimited</code>。</p>
+<p>通过设置<code>pr_fmt</code>宏，可定制通用的日志前缀。</p>
+<h3 id="kernel-module的makefile">kernel module的Makefile</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="c"># ch4/printk_loglvl/Makefile
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nv">PWD</span>          <span class="o">:=</span> <span class="k">$(</span>shell <span class="nb">pwd</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="nv">obj-m</span>        <span class="o">+=</span> printk_loglvl.o
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Enable the pr_debug() and pr_devel() as well by removing the comment from
+</span></span></span><span class="line"><span class="cl"><span class="c"># one of the lines below
+</span></span></span><span class="line"><span class="cl"><span class="c">#EXTRA_CFLAGS += -DDEBUG
+</span></span></span><span class="line"><span class="cl"><span class="c">#CFLAGS_printk_loglvl.o := -DDEBUG
+</span></span></span><span class="line"><span class="cl"><span class="c"></span>
+</span></span><span class="line"><span class="cl"><span class="nf">all</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        make -C /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build/ <span class="nv">M</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> modules
+</span></span><span class="line"><span class="cl"><span class="nf">install</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        make -C /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build/ <span class="nv">M</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> modules_install
+</span></span><span class="line"><span class="cl"><span class="nf">clean</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        make -C /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build/ <span class="nv">M</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> clean
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Kbuild系统使用<code>obj-y</code>和<code>obj-m</code>两个变量来表示不同模块的编译配置。</p>
+<p><code>obj-y</code> 表示把<code>*.o</code>编译进内核。</p>
+<p><code>obj-m</code> 表示把<code>*.o</code>作为模块进行编译，不会编译进内核，而是生成独立的<code>*.ko</code>文件。</p>
+<h3 id="a-better-makefile-template">A &ldquo;Better&rdquo; Makefile template</h3>
+<ul>
+<li>usual targets: build, install, clean</li>
+<li>adhering to kernel coding style (indent+checkpatch)</li>
+<li>several static analysis targets (via sparse, gcc, flawfinder, cppcheck)</li>
+<li>two &lsquo;dummy&rsquo; dynamic analysis targets (KASAN, LOCKDEP)</li>
+<li>a packaging (.tar.xz) target</li>
+<li>a help target.</li>
+</ul>
+<h3 id="cross-compliing-a-kernel-module">Cross-compliing a kernel module</h3>
+<p>没有交叉编译的需求，先跳过。</p>
+<h3 id="licensing-kernel-module">Licensing kernel module</h3>
+<p>内核源码本身是基于GNU GPL v2 (GPL-2.0)的。如果你想向内核贡献源码，那么你的代码也得遵循GPL-2.0。</p>
+<p>可通过<code>MODULE_LICENSE()</code>宏来指定协议。</p>
+<h3 id="emulating-library-like-features-for-kernel-modules">Emulating &ldquo;library-like&rdquo; features for kernel modules</h3>
+<p>使内核模块模拟library特性</p>
+<blockquote>
+<p>do not reinvent the wheel, software reuse, modularity</p>
+</blockquote>
+<p>可内核里是没有library的，但有两种方式可以让内核模块，模拟库的效果：</p>
+<ol>
+<li>在内核模块显式引入其他模块的源码文件</li>
+<li>module stacking</li>
+</ol>
+<h4 id="performing-library-emulation-via-multiple-source-files">Performing library emulation via multiple source files</h4>
+<p>除了在c语言源码文件中通过include引入其他c文件之外，还需要修改Makefile：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-make" data-lang="make"><span class="line"><span class="cl"><span class="nv">obj-m</span>               <span class="o">:=</span> &lt;label&gt;.o
+</span></span><span class="line"><span class="cl"><span class="nf">&lt;label&gt;-objs </span><span class="o">:</span>= <span class="n">proj</span>1.<span class="n">o</span> <span class="n">proj</span>2.<span class="n">o</span> <span class="n">proj</span>3.<span class="n">o</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到，在<code>obj-m</code>指令之后，紧接着<code>&lt;label&gt;-objs</code>指令。内核编译系统会将每个被引入的c文件单独编译成一个<code>.o</code>文件，然后把它们链接在一起，从而形成最终的二进制内核模块目标文件<code>&lt;label&gt;.ko</code>。</p>
+<p>第8章中有个一个真实的示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-make" data-lang="make"><span class="line"><span class="cl"><span class="c"># ch8/lowlevel_mem/Makefile
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nv">obj-m</span>                 <span class="o">+=</span> lowlevel_mem_lkm.o
+</span></span><span class="line"><span class="cl"><span class="nv">lowlevel_mem_lkm-objs</span> <span class="o">:=</span> lowlevel_mem.o ../../klib_llkd.o
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="module-stacking">module stacking</h4>
+<p>在了解module stacking之前，需要先了解下内核模块中方法和变量的作用域。</p>
+<p>自内核2.6版本开始，所有的内核模块的变量(static和global)、方法的作用域默认只在本模块内，外部不可见。</p>
+<p>LKM框架提供了<code>EXPORT_SYMBOL()</code>和<code>EXPORT_SYMBOL_GPL()</code>这两个宏来改变作用域，使得全部模块都可见。</p>
+<p>想要使用<code>EXPORT_SYMBOL()</code>，需要去掉<code>static</code>修饰符(虽然允许同时使用<code>static</code>和<code>EXPORT_SYMBOL</code>，但最好不要这么用)。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">my_glob</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">EXPORT_SYMBOL</span><span class="p">(</span><span class="n">my_glob</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">long</span> <span class="nf">my_foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span> <span class="p">[...]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">EXPORT_SYMBOL</span><span class="p">(</span><span class="n">my_foo</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当一个内核模块的变量、数据结构、函数使用<code>EXPORT_SYMBOL()</code>之后，其他模块就可以通过<code>extern</code>引用它们了。（Makefile中的<code>obj-m</code>指令也需要添加被引用的模块？？？暂不确定）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">extern</span> <span class="kt">int</span> <span class="n">my_glob</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">extern</span> <span class="kt">long</span> <span class="nf">my_foo</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过<code>lsmod</code>命令可以查看一个内核模块被其他模块引用的情况，第三列表示数量，第四列是其used by的具体模块名称。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ lsmod <span class="p">|</span> grep vbox
+</span></span><span class="line"><span class="cl">vboxnetadp       <span class="m">28672</span>  <span class="m">0</span>
+</span></span><span class="line"><span class="cl">vboxnetflt       <span class="m">28672</span>  <span class="m">1</span>
+</span></span><span class="line"><span class="cl">vboxdrv         <span class="m">479232</span>  <span class="m">3</span> vboxnetadp,vboxnetflt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>内核模块之间的这种依赖关系，就像是stack一样，因此有了module stacking这个概念。</p>
+<h3 id="module-parameters">module parameters</h3>
+<p>模块参数是在模块插入时（<code>insmod</code>）通过<code>name=value</code>的格式传入的，例如<code>sudo insmod modparams1.ko mp_debug_level=2</code>。</p>
+<p>module没有<code>main()</code>方法，也就没有<code>(argc, argv)</code>参数列表，那么这种传参是如何实现的？其实是链接器做的：在内核模块中将变量声明为<code>static</code>，然后调用宏<code>module_param()</code>即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// ch5/modparams/modparams1/modparams1.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="kt">int</span> <span class="n">mp_debug_level</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">module_param</span><span class="p">(</span><span class="n">mp_debug_level</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="mo">0660</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">MODULE_PARM_DESC</span><span class="p">(</span><span class="n">mp_debug_level</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="s">&#34;Debug level [0-2]; 0 =&gt; no debug messages, 2 =&gt; high verbosity&#34;</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>module_param()</code>的三个参数：</p>
+<ol>
+<li>变量名称，需要<code>stacic</code>修饰</li>
+<li>数据类型</li>
+<li>对应sysfs的文件权限</li>
+</ol>
+<p><code>MODULE_PARM_DESC</code>用于添加描述信息，通过<code>modinfo</code>命令可查看。</p>
+<p>在模块被插入之后，可以在<code>/sys/module/&lt;module-name&gt;/parameters/*</code>看到所有的模块参数。<code>module_param()</code>的第三个参数就对应这里的特定参数的文件权限。修改文件中的值，也就修改了模块参数。</p>
+<p>模块参数支持的数据类型在<code>include/linux/moduleparam.h</code>中<code>module_param</code>的注释中可以查看。</p>
+<p>所有的内核模块参数默认都是可选的。如何做到必填呢？两种方式：一是在<code>module_init</code>时检查参数如果是默认值就报错，二是使用<code>module_param_cb</code>这个宏。</p>
+<h3 id="auto-loading-modules-on-system-boot">auto-loading modules on system boot</h3>
+<p><code>make modules_install</code>之后，将<code>&lt;module-name&gt;</code>写入文件<code>/etc/modules-load.d/&lt;module-name&gt;.conf</code>中（或者添加到文件<code>/etc/modules-load.d/modules.conf</code>中）。重启系统生效。</p>
+<p>如果自动装载的模块需要输入参数怎么办？编辑<code>/etc/modprobe.d/*.conf</code>文件，按照格式<code>options &lt;module-name&gt; &lt;parameter-name&gt;=&lt;value&gt;</code>进行传参。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-04-11</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/linux_kernel_programming_notes/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes/" data-title="《Linux Kernel Programming》读书笔记" data-hashtags="linux"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes/" data-hashtag="linux"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 WhatsApp" data-sharer="whatsapp" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes/" data-title="《Linux Kernel Programming》读书笔记" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes/" data-title="《Linux Kernel Programming》读书笔记"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes/" data-title="《Linux Kernel Programming》读书笔记"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Myspace" data-sharer="myspace" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes/" data-title="《Linux Kernel Programming》读书笔记" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="分享到 Blogger" data-sharer="blogger" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes/" data-title="《Linux Kernel Programming》读书笔记" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Evernote" data-sharer="evernote" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes/" data-title="《Linux Kernel Programming》读书笔记"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linux/">linux</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/apple_silicon_mac_install_vm_ubuntu/" class="prev" rel="prev" title="Apple Silicon M1的Mac电脑安装ubuntu虚拟机"><i class="fas fa-angle-left fa-fw"></i>Apple Silicon M1的Mac电脑安装ubuntu虚拟机</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.96.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.9"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yrc0d3</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/autocomplete/autocomplete.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.stemmer.support.min.js"></script><script type="text/javascript" src="/lib/lunr/lunr.zh.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","lunrLanguageCode":"zh","lunrSegmentitURL":"/lib/lunr/lunr.segmentit.js","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"lunr"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
