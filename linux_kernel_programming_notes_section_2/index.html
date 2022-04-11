@@ -5,37 +5,37 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>Apple Silicon M1的Mac电脑安装ubuntu虚拟机 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="Apple Silicon M1的Mac电脑安装ubuntu虚拟机" />
-<meta property="og:description" content="为了学习linux内核，安装一个ubuntu虚拟机比较方便。 安装虚拟机软件 Parallel Desktop收费，pass。 VMWare Fusion还是技术预览版。 最终" />
+        <title>《Linux Kernel Programming》读书笔记-第二部分 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="《Linux Kernel Programming》读书笔记-第二部分" />
+<meta property="og:description" content="Kernel Internal Essentials - Processes and Threads Memory Management Internals - Essentials Kernel Memory Allocation for Module Authors The CPU Scheduler" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" /><meta property="og:image" content="https://yrc0d3.github.io/logo.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2022-03-26T22:12:11+08:00" />
-<meta property="article:modified_time" content="2022-04-05T23:46:56+08:00" />
+<meta property="og:url" content="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" /><meta property="og:image" content="https://yrc0d3.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-11T23:36:51+08:00" />
+<meta property="article:modified_time" content="2022-04-11T23:36:51+08:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://yrc0d3.github.io/logo.png"/>
 
-<meta name="twitter:title" content="Apple Silicon M1的Mac电脑安装ubuntu虚拟机"/>
-<meta name="twitter:description" content="为了学习linux内核，安装一个ubuntu虚拟机比较方便。 安装虚拟机软件 Parallel Desktop收费，pass。 VMWare Fusion还是技术预览版。 最终"/>
+<meta name="twitter:title" content="《Linux Kernel Programming》读书笔记-第二部分"/>
+<meta name="twitter:description" content="Kernel Internal Essentials - Processes and Threads Memory Management Internals - Essentials Kernel Memory Allocation for Module Authors The CPU Scheduler"/>
 <meta name="application-name" content="LoveIt">
 <meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" /><link rel="prev" href="https://yrc0d3.github.io/csapp_chapter9/" /><link rel="next" href="https://yrc0d3.github.io/linux_kernel_programming_notes_section_1/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" /><link rel="prev" href="https://yrc0d3.github.io/linux_kernel_programming_notes_section_1/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "Apple Silicon M1的Mac电脑安装ubuntu虚拟机",
+        "headline": "《Linux Kernel Programming》读书笔记-第二部分",
         "inLanguage": "zh-CN",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "https:\/\/yrc0d3.github.io\/apple_silicon_mac_install_vm_ubuntu\/"
+            "@id": "https:\/\/yrc0d3.github.io\/linux_kernel_programming_notes_section_2\/"
         },"image": {
                 "@type": "ImageObject",
                 "url": "https:\/\/yrc0d3.github.io\/cover.png",
                 "width":  800 ,
                 "height":  600 
-            },"genre": "posts","keywords": "mac","wordcount":  297 ,
-        "url": "https:\/\/yrc0d3.github.io\/apple_silicon_mac_install_vm_ubuntu\/","datePublished": "2022-03-26T22:12:11+08:00","dateModified": "2022-04-05T23:46:56+08:00","publisher": {
+            },"genre": "posts","keywords": "linux","wordcount":  21 ,
+        "url": "https:\/\/yrc0d3.github.io\/linux_kernel_programming_notes_section_2\/","datePublished": "2022-04-11T23:36:51+08:00","dateModified": "2022-04-11T23:36:51+08:00","publisher": {
                 "@type": "Organization",
                 "name": "xxxx",
                 "logo": {
@@ -116,9 +116,9 @@
                 <div class="container"><div class="toc" id="toc-auto">
             <h2 class="toc-title">目录</h2>
             <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">Apple Silicon M1的Mac电脑安装ubuntu虚拟机</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/mac/"><i class="far fa-folder fa-fw"></i>mac</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-26">2022-03-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 297 字&nbsp;
+        </div><article class="page single"><h1 class="single-title animated flipInX">《Linux Kernel Programming》读书笔记-第二部分</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>读书笔记</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-11">2022-04-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 21 字&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 1 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -127,78 +127,42 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#安装虚拟机软件">安装虚拟机软件</a></li>
-    <li><a href="#下载安装ubuntu">下载安装ubuntu</a></li>
-    <li><a href="#修改分辨率">修改分辨率</a></li>
+    <li><a href="#kernel-internal-essentials---processes-and-threads">Kernel Internal Essentials - Processes and Threads</a></li>
+    <li><a href="#memory-management-internals---essentials">Memory Management Internals - Essentials</a></li>
+    <li><a href="#kernel-memory-allocation-for-module-authors">Kernel Memory Allocation for Module Authors</a></li>
+    <li><a href="#the-cpu-scheduler">The CPU Scheduler</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><p>为了学习linux内核，安装一个ubuntu虚拟机比较方便。</p>
-<h2 id="安装虚拟机软件">安装虚拟机软件</h2>
-<p>Parallel Desktop收费，pass。</p>
-<p><a href="https://customerconnect.vmware.com/downloads/get-download?downloadGroup=FUS-PUBTP-2021H1" target="_blank" rel="noopener noreffer">VMWare Fusion</a>还是技术预览版。</p>
-<p>最终选择了<a href="https://mac.getutm.app/" target="_blank" rel="noopener noreffer">UTM</a>。</p>
-<h2 id="下载安装ubuntu">下载安装ubuntu</h2>
-<p><a href="https://mac.getutm.app/gallery/ubuntu-20-04" target="_blank" rel="noopener noreffer">https://mac.getutm.app/gallery/ubuntu-20-04</a></p>
-<p>按照上面的指引安装即可。</p>
-<h2 id="修改分辨率">修改分辨率</h2>
-<p>目前在用的MacBook Pro 14的分辨率为3024x1964，该分辨率还包含了刘海那一横条部分。ubuntu系统使用16:10的分辨率就好，刘海那一条置黑，因此需要的分辨率为3024x1890。</p>
-<p>首次设置：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cvt <span class="m">3024</span> <span class="m">1890</span>
-</span></span><span class="line"><span class="cl">sudo xrandr --newmode <span class="s2">&#34;3024x1890_60.00&#34;</span>  488.50  <span class="m">3024</span> <span class="m">3264</span> <span class="m">3592</span> <span class="m">4160</span>  <span class="m">1890</span> <span class="m">1893</span> <span class="m">1899</span> <span class="m">1958</span> -hsync +vsync
-</span></span><span class="line"><span class="cl">sudo xrandr --addmode Virtual-1 <span class="s2">&#34;3024x1890_60.00&#34;</span>
-</span></span><span class="line"><span class="cl">sudo xrandr --output Virtual-1 --mode <span class="s2">&#34;3024x1890_60.00&#34;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>为了避免重启失效，把以下代码加入<code>~/.profile</code>中：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cvt <span class="m">3024</span> <span class="m">1890</span>
-</span></span><span class="line"><span class="cl">xrandr --newmode <span class="s2">&#34;3024x1890_60.00&#34;</span>  488.50  <span class="m">3024</span> <span class="m">3264</span> <span class="m">3592</span> <span class="m">4160</span>  <span class="m">1890</span> <span class="m">1893</span> <span class="m">1899</span> <span class="m">1958</span> -hsync +vsync
-</span></span><span class="line"><span class="cl">xrandr --addmode Virtual-1 <span class="s2">&#34;3024x1890_60.00&#34;</span>
-</span></span><span class="line"><span class="cl">xrandr --output Virtual-1 --mode <span class="s2">&#34;3024x1890_60.00&#34;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div></div><div class="post-footer" id="post-footer">
+            </div><div class="content" id="content"><h2 id="kernel-internal-essentials---processes-and-threads">Kernel Internal Essentials - Processes and Threads</h2>
+<h2 id="memory-management-internals---essentials">Memory Management Internals - Essentials</h2>
+<h2 id="kernel-memory-allocation-for-module-authors">Kernel Memory Allocation for Module Authors</h2>
+<h2 id="the-cpu-scheduler">The CPU Scheduler</h2>
+</div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>更新于 2022-04-05</span>
+                <span>更新于 2022-04-11</span>
             </div>
             <div class="post-info-license"></div>
         </div>
         <div class="post-info-line">
             <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/apple_silicon_mac_install_vm_ubuntu/index.md" target="_blank">阅读原始文档</a>
+                            <a class="link-to-markdown" href="/linux_kernel_programming_notes_section_2/index.md" target="_blank">阅读原始文档</a>
                         </span></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" data-title="Apple Silicon M1的Mac电脑安装ubuntu虚拟机" data-hashtags="mac"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" data-hashtag="mac"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 WhatsApp" data-sharer="whatsapp" data-url="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" data-title="Apple Silicon M1的Mac电脑安装ubuntu虚拟机" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" data-title="Apple Silicon M1的Mac电脑安装ubuntu虚拟机"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" data-title="Apple Silicon M1的Mac电脑安装ubuntu虚拟机"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Myspace" data-sharer="myspace" data-url="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" data-title="Apple Silicon M1的Mac电脑安装ubuntu虚拟机" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="分享到 Blogger" data-sharer="blogger" data-url="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" data-title="Apple Silicon M1的Mac电脑安装ubuntu虚拟机" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Evernote" data-sharer="evernote" data-url="https://yrc0d3.github.io/apple_silicon_mac_install_vm_ubuntu/" data-title="Apple Silicon M1的Mac电脑安装ubuntu虚拟机"><i class="fab fa-evernote fa-fw"></i></a></span>
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" data-title="《Linux Kernel Programming》读书笔记-第二部分" data-hashtags="linux"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" data-hashtag="linux"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 WhatsApp" data-sharer="whatsapp" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" data-title="《Linux Kernel Programming》读书笔记-第二部分" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" data-title="《Linux Kernel Programming》读书笔记-第二部分"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" data-title="《Linux Kernel Programming》读书笔记-第二部分"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Myspace" data-sharer="myspace" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" data-title="《Linux Kernel Programming》读书笔记-第二部分" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="分享到 Blogger" data-sharer="blogger" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" data-title="《Linux Kernel Programming》读书笔记-第二部分" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Evernote" data-sharer="evernote" data-url="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" data-title="《Linux Kernel Programming》读书笔记-第二部分"><i class="fab fa-evernote fa-fw"></i></a></span>
             </div>
         </div>
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/mac/">mac</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linux/">linux</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
         </section>
     </div>
 
-    <div class="post-nav"><a href="/csapp_chapter9/" class="prev" rel="prev" title="[CSAPP]第九章 虚拟内存"><i class="fas fa-angle-left fa-fw"></i>[CSAPP]第九章 虚拟内存</a>
-            <a href="/linux_kernel_programming_notes_section_1/" class="next" rel="next" title="《Linux Kernel Programming》读书笔记-第一部分">《Linux Kernel Programming》读书笔记-第一部分<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/linux_kernel_programming_notes_section_1/" class="prev" rel="prev" title="《Linux Kernel Programming》读书笔记-第一部分"><i class="fas fa-angle-left fa-fw"></i>《Linux Kernel Programming》读书笔记-第一部分</a></div>
 </div>
 </article></div>
             </main><footer class="footer">
