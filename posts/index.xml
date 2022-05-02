@@ -9,7 +9,7 @@
     <pubDate>Mon, 11 Apr 2022 23:36:51 &#43;0800</pubDate>
     <author>作者</author>
     <guid>https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/</guid>
-    <description><![CDATA[Kernel Internal Essentials - Processes and Threads Memory Management Internals - Essentials Kernel Memory Allocation for Module Authors The CPU Scheduler]]></description>
+    <description><![CDATA[Kernel Internal Essentials - Processes and Threads Understanding process and interrupt contexts 宏内核(monolithic)意味着：当进程或线程进行系统调用时，会切换到内核模式然后执行内核代码，也可能操作内核数]]></description>
 </item><item>
     <title>《Linux Kernel Programming》读书笔记-第一部分</title>
     <link>https://yrc0d3.github.io/linux_kernel_programming_notes_section_1/</link>

@@ -6,17 +6,17 @@
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>《Linux Kernel Programming》读书笔记-第二部分 - my blog</title><meta name="Description" content="这是我的全新 Hugo 网站"><meta property="og:title" content="《Linux Kernel Programming》读书笔记-第二部分" />
-<meta property="og:description" content="Kernel Internal Essentials - Processes and Threads Memory Management Internals - Essentials Kernel Memory Allocation for Module Authors The CPU Scheduler" />
+<meta property="og:description" content="Kernel Internal Essentials - Processes and Threads Understanding process and interrupt contexts 宏内核(monolithic)意味着：当进程或线程进行系统调用时，会切换到内核模式然后执行内核代码，也可能操作内核数" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://yrc0d3.github.io/linux_kernel_programming_notes_section_2/" /><meta property="og:image" content="https://yrc0d3.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-04-11T23:36:51+08:00" />
-<meta property="article:modified_time" content="2022-04-11T23:36:51+08:00" />
+<meta property="article:modified_time" content="2022-04-11T23:47:32+08:00" />
 
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://yrc0d3.github.io/logo.png"/>
 
 <meta name="twitter:title" content="《Linux Kernel Programming》读书笔记-第二部分"/>
-<meta name="twitter:description" content="Kernel Internal Essentials - Processes and Threads Memory Management Internals - Essentials Kernel Memory Allocation for Module Authors The CPU Scheduler"/>
+<meta name="twitter:description" content="Kernel Internal Essentials - Processes and Threads Understanding process and interrupt contexts 宏内核(monolithic)意味着：当进程或线程进行系统调用时，会切换到内核模式然后执行内核代码，也可能操作内核数"/>
 <meta name="application-name" content="LoveIt">
 <meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -34,8 +34,8 @@
                 "url": "https:\/\/yrc0d3.github.io\/cover.png",
                 "width":  800 ,
                 "height":  600 
-            },"genre": "posts","keywords": "linux","wordcount":  21 ,
-        "url": "https:\/\/yrc0d3.github.io\/linux_kernel_programming_notes_section_2\/","datePublished": "2022-04-11T23:36:51+08:00","dateModified": "2022-04-11T23:36:51+08:00","publisher": {
+            },"genre": "posts","keywords": "linux","wordcount":  5630 ,
+        "url": "https:\/\/yrc0d3.github.io\/linux_kernel_programming_notes_section_2\/","datePublished": "2022-04-11T23:36:51+08:00","dateModified": "2022-04-11T23:47:32+08:00","publisher": {
                 "@type": "Organization",
                 "name": "xxxx",
                 "logo": {
@@ -118,8 +118,8 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animated flipInX">《Linux Kernel Programming》读书笔记-第二部分</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yrc0d3</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"><i class="far fa-folder fa-fw"></i>读书笔记</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-11">2022-04-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 21 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 1 分钟&nbsp;</div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-04-11">2022-04-11</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 5630 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 12 分钟&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>目录</span>
@@ -127,14 +127,555 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#kernel-internal-essentials---processes-and-threads">Kernel Internal Essentials - Processes and Threads</a></li>
-    <li><a href="#memory-management-internals---essentials">Memory Management Internals - Essentials</a></li>
+    <li><a href="#kernel-internal-essentials---processes-and-threads">Kernel Internal Essentials - Processes and Threads</a>
+      <ul>
+        <li><a href="#understanding-process-and-interrupt-contexts">Understanding process and interrupt contexts</a></li>
+        <li><a href="#understanding-the-basics-of-the-process-vas">Understanding the basics of the process VAS</a></li>
+        <li><a href="#organizing-processes-threads-and-their-stacks---user-and-kernel-space">Organizing processes, threads, and their stacks - user and kernel space</a>
+          <ul>
+            <li><a href="#user-space-organization">user space organization</a></li>
+            <li><a href="#kernel-space-organization">kernel space organization</a></li>
+          </ul>
+        </li>
+        <li><a href="#viewing-the-user-and-kernel-stacks">Viewing the user and kernel stacks</a>
+          <ul>
+            <li><a href="#传统方式">传统方式</a></li>
+            <li><a href="#现代化方式-ebpf">现代化方式-[e]BPF</a></li>
+          </ul>
+        </li>
+        <li><a href="#进程vas概述">进程VAS概述</a></li>
+        <li><a href="#task-structure">task structure</a></li>
+      </ul>
+    </li>
+    <li><a href="#memory-management-internals---essentials">Memory Management Internals - Essentials</a>
+      <ul>
+        <li><a href="#从hello-world开始">从Hello World开始</a></li>
+        <li><a href="#vm-split-on-64-bit-linux-systems">VM Split on 64-bit Linux systems</a></li>
+        <li><a href="#the-process-vas">The process VAS</a></li>
+        <li><a href="#virtual-memory-area">Virtual Memory Area</a></li>
+        <li><a href="#kernel-segment">Kernel Segment</a></li>
+        <li><a href="#randomizing-the-memory-layout---kaslr">Randomizing the memory layout - [K]ASLR</a></li>
+        <li><a href="#physical-memory">Physical memory</a></li>
+      </ul>
+    </li>
     <li><a href="#kernel-memory-allocation-for-module-authors">Kernel Memory Allocation for Module Authors</a></li>
     <li><a href="#the-cpu-scheduler">The CPU Scheduler</a></li>
   </ul>
 </nav></div>
             </div><div class="content" id="content"><h2 id="kernel-internal-essentials---processes-and-threads">Kernel Internal Essentials - Processes and Threads</h2>
+<h3 id="understanding-process-and-interrupt-contexts">Understanding process and interrupt contexts</h3>
+<p>宏内核(monolithic)意味着：当进程或线程进行系统调用时，会切换到内核模式然后执行内核代码，也可能操作内核数据。</p>
+<p>内核代码会在两种context中执行：</p>
+<ul>
+<li>Process context：通过系统调用或者异常进入内核态，是同步的(top down)</li>
+<li>Interrupt context：通过硬件中断进入内核态，是异步的(bottom up)</li>
+</ul>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_1.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_1.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_1.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_1.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>图6.1中也展示了纯内核线程，它们只在内核空间执行，并且看不到用户VAS。</p>
+<h3 id="understanding-the-basics-of-the-process-vas">Understanding the basics of the process VAS</h3>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_2.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_2.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_2.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_2.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>从<a href="https://manybutfinite.com/post/anatomy-of-a-program-in-memory/" target="_blank" rel="noopener noreffer">《Anatomy of a Program in Memory》</a>上找来的图（需要在chrome里设置允许展示混合内容，参考<a href="https://sspai.com/post/63507" target="_blank" rel="noopener noreffer">《Chrome 禁止混合内容的解决办法》</a>）：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/linux_x32_process_vas_layout.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/linux_x32_process_vas_layout.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/linux_x32_process_vas_layout.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/linux_x32_process_vas_layout.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>linux进程包含的mappings (or segments)：</p>
+<ul>
+<li>Text segment：static</li>
+<li>Data segment：
+<ul>
+<li>Initialized data segment：static</li>
+<li>Uninitialized data segmeng：也叫bss，static</li>
+<li>Heap segmeng：dynamic。通过<code>malloc</code> 分配的空间，小于<code>MMAP_THRESHOLD</code> (默认128KB)会直接在堆上分配，大于的会在进程VAS的一块单独的mapping空间分配(通过<code>mmap</code>系统调用)。</li>
+</ul>
+</li>
+<li>Libraries (text, data)：dynamic</li>
+<li>Stack：dynamic</li>
+</ul>
+<p>图6.2中，main、thrd2、thrd3这三个线程，除了各自的stack是独立的之外，其他都是共享的。</p>
+<p>本书作者提供了一个命令行查看进程VAS的可视化工具<a href="https://github.com/kaiwan/procmap" target="_blank" rel="noopener noreffer">https://github.com/kaiwan/procmap</a></p>
+<h3 id="organizing-processes-threads-and-their-stacks---user-and-kernel-space">Organizing processes, threads, and their stacks - user and kernel space</h3>
+<blockquote>
+<p>A thread is merely an execution path within a process.
+Threads share all process resources except for the stack.
+The thread, not the process, is the kernel schedulable entity (aka KSE).</p>
+</blockquote>
+<p>linux中，每个线程都对应内核中的一个task structure (aka process descriptor)。</p>
+<blockquote>
+<p>we require one stack per thread per privilege level supported by the CPU.</p>
+</blockquote>
+<p>因此，linux中每个用户空间线程都有两个栈，一个用户空间栈和一个内核空间栈。当然，内核空间的线程只有一个内核空间的栈。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_3.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_3.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_3.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_3.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<h4 id="user-space-organization">user space organization</h4>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_4.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_4.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_4.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_4.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>用户态进程包含：</p>
+<ul>
+<li>Text: r-x</li>
+<li>Data Segment: rw-</li>
+<li>LIbrary mappings</li>
+<li>Downward-growing stack(s)</li>
+</ul>
+<p>图6.4中的P1是单线程的进程，只有一个main()线程</p>
+<p>图6.4中的P2、Pn是多线程的进程，main()线程在调用<code>fork</code>时分配，其他线程在调用<code>pthread_create</code>时分配。</p>
+<p>用户空间的线程虽然时动态分配的，但是大小有限制，即<code>RLIMIT_STACK</code> ，一般是8MB。</p>
+<h4 id="kernel-space-organization">kernel space organization</h4>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_5.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_5.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_5.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_5.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>每个用户态线程都有一个对应的内核态的栈，加上用户态的栈，一共有两个栈，如图6.5中的P1、P2和Pn。</p>
+<p>每个内核态线程只有一个内核态的栈，如图6.5中的kthrd1、kthrd2和kthrdn。</p>
+<p>内核态的栈都是固定大小的，并且很小。一般来说，32位机器上为2页大小，64位机器上为4页大小，一页一般是4KB。</p>
+<p>很多架构（x86和ARM64等）都支持一个单独的CPU绑定栈用于处理中断。当外部硬件中断发生时，CPU的控制单元会立刻切换到中断处理器，这个栈就是用来保存中断处理器代码执行路径的。</p>
+<h3 id="viewing-the-user-and-kernel-stacks">Viewing the user and kernel stacks</h3>
+<h4 id="传统方式">传统方式</h4>
+<p>内核态线程：</p>
+<p><code>/proc/&lt;pid&gt;/stack</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ sudo cat /proc/2075/stack 
+</span></span><span class="line"><span class="cl"><span class="o">[</span>&lt;0&gt;<span class="o">]</span> __switch_to+0x100/0x150
+</span></span><span class="line"><span class="cl"><span class="o">[</span>&lt;0&gt;<span class="o">]</span> do_wait+0x298/0x2b8
+</span></span><span class="line"><span class="cl"><span class="o">[</span>&lt;0&gt;<span class="o">]</span> kernel_wait4+0x9c/0x268
+</span></span><span class="line"><span class="cl"><span class="o">[</span>&lt;0&gt;<span class="o">]</span> __do_sys_wait4+0xa4/0x1c0
+</span></span><span class="line"><span class="cl"><span class="o">[</span>&lt;0&gt;<span class="o">]</span> __arm64_sys_wait4+0x30/0x40
+</span></span><span class="line"><span class="cl"><span class="o">[</span>&lt;0&gt;<span class="o">]</span> el0_svc_common.constprop.0+0xf4/0x200
+</span></span><span class="line"><span class="cl"><span class="o">[</span>&lt;0&gt;<span class="o">]</span> el0_svc_handler+0x38/0xa8
+</span></span><span class="line"><span class="cl"><span class="o">[</span>&lt;0&gt;<span class="o">]</span> el0_svc+0x10/0x180
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>每一行都表示一个栈帧。最上面的是栈顶，最下面的是栈底。</p>
+<p>每一行最左面的<code>[&lt;0&gt;]</code> 是代码的地址，出于安全原因，都被显示为0。</p>
+<p>用户态线程：</p>
+<p>要困难一些，一些linux发行版中可以安装gstack或gstack（原理都是用gdb）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ pstack <span class="m">7013</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#0  0x00000039958c5620 in __read_nocancel () from /lib64/libc.so.6</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#1  0x000000000047dafe in rl_getc ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#2  0x000000000047def6 in rl_read_key ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#3  0x000000000046d0f5 in readline_internal_char ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#4  0x000000000046d4e5 in readline ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#5  0x00000000004213cf in ?? ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#6  0x000000000041d685 in ?? ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#7  0x000000000041e89e in ?? ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#8  0x00000000004218dc in yyparse ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#9  0x000000000041b507 in parse_command ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#10 0x000000000041b5c6 in read_command ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#11 0x000000000041b74e in reader_loop ()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#12 0x000000000041b2aa in main ()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>无法解释的栈会写作??</p>
+<h4 id="现代化方式-ebpf">现代化方式-[e]BPF</h4>
+<p>4.X开始的内核支持[e]BPF。通过BCC或bpftrace来使用会方便些。</p>
+<p>可以按照这个步骤安装一下BCC：<a href="https://github.com/iovisor/bcc/blob/master/INSTALL.md" target="_blank" rel="noopener noreffer">https://github.com/iovisor/bcc/blob/master/INSTALL.md</a></p>
+<p>BCC提供了<code>stackcount</code> (ubuntu上叫<code>stackcount-bpfcc</code>)工具可以同时查看内核栈和用户栈。</p>
+<h3 id="进程vas概述">进程VAS概述</h3>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_7.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_7.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_7.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_7.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<h3 id="task-structure">task structure</h3>
+<p>task structure代码位于<code>include/linux/sched.h:struct task_struct</code></p>
+<p>linux中，每个进程都包含一个或多个线程，每个线程都对应一个内核数据结构task structure。</p>
+<p>图6.8展示了task structure包含的主要内容：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_8.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_8.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_8.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_8.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>所有的task structrue对象都存放在内核内存中的叫做task list的双向循环链表中。</p>
+<p>在内核中可以通过<code>current</code>宏(<code>linux/sched.h</code>)来获得当前线程的task_struct指针。</p>
+<p>内核代码会在process (or task) context和interrupt (or atomic) context之间切换，因此，编写内核或驱动代码时要判断当前处于哪个context，可以使用<code>in_task</code>宏(<code>linux/preempt.h</code>)来判断当前是否处于process context。</p>
+<p><code>current</code>宏只在process context中才有效。</p>
+<p>最好通过内核中的内建的helper methods来获取task_struct的成员变量，比如通过<code>task_pid_nr()</code>来获取PID，而不是直接通过<code>current-&gt;pid</code> 这种方式来获取。这些方法都在<code>include/linux/sched.h</code> 中。</p>
+<p>要遍历所有进程，可以使用<code>for_earch_process</code>宏（只遍历每个进程的<code>main()</code>线程）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// include/linux/sched/signal.h
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define for_each_process(p) \
+</span></span></span><span class="line"><span class="cl"><span class="cp">    for (p = &amp;init_task; (p = next_task(p)) != &amp;init_task; )
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>要遍历所有线程，可以使用<code>do_each_thread() {...} while_each_thread()</code>这一对宏。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_10.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_10.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_10.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_10.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>图6.10中，线程名称用方括号包起来的表示这是内核线程。</p>
+<p>在linux内核中，每个线程都有一个独有的PID。这违反了POSIX.1b中的pthreads标准（同一进程的不同线程共享同一个PID）。为了解决这个问题，2.5版本linux内核中的task_struct加入了<strong>Thread Group IDentifier</strong> (TGID)：对于单线程的进程，其tgid和pid相同。对于多线程的进程，main线程的tgid和pid相同；其他线程的tgid等于main线程的tgid，但pid各不相同。可以结合图6.10中的VBoxService来理解。</p>
+<p>通过通用的GNU ps(1)命令也能查看TGID和PID，需要使用<code>-LA</code>选项：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_ps.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_ps.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_ps.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_6_ps.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>如图所示，第一列PID表示<code>task_struct</code>中的tgid，第二列的LWP (LightWeight Process or thread)表示<code>task_struct</code> 中的pid。</p>
 <h2 id="memory-management-internals---essentials">Memory Management Internals - Essentials</h2>
+<h3 id="从hello-world开始">从Hello World开始</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;Hello, world.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>printf(3)</code> 代码是写在libc里的。我们的程序在启动时，loader会检测需要的共享库，然后将它们映射到当前进程的VAS中（具体知识涉及动态链接、位置无关代码等）。然后就能调用到了。</p>
+<p>通过<code>ldd(1)</code> 命令可以查看程序依赖的共享库。</p>
+<p>通过<code>strace(1)</code> 命令可以查看程序执行中的系统调用命令。</p>
+<p><code>printf(3)</code> 会被转换成<code>write(2)</code>系统调用，把字符串写到stdout中。那么程序是如何访问内核代码的呢？原理就是用户和内核VAS存在于同一个VAS中，通过一种叫做VM Split的技术，将可用空间按照<code>u:k</code>的比例分配给user和kernel。下图展示的是按照<code>2:2</code> 比例划分的32位linux系统（Arm-32系统一般都是<code>2:2</code>，x86-32一般是<code>3:1</code>）：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_1.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_1.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_1.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_1.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<h3 id="vm-split-on-64-bit-linux-systems">VM Split on 64-bit Linux systems</h3>
+<p>首先，64位并不会全部用于寻址。一般来讲，x86_64的linux系统的页大小为4KB，用48位(Least Significant Bit, LSB)来寻址。原因就是64位用于寻址的话太多了，用不到那么多。</p>
+<p>在用户空间用<code>printf(&quot;address of i is 0x%x\n&quot;, &amp;i);</code> 这种方式打印地址的话， 展示的是UVA(User Virtual Address)。</p>
+<p>在内核空间用<code>printk()</code> 打印地址的话，展示的是KVA(Kernal Virtual Address)。</p>
+<p>virtual address并不是一个从0开始的绝对地址，而是一个bitmask（MMU负责转换）。图7.2展示的是x86_64的Linux中的虚拟地址：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_2.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_2.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_2.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_2.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>可以看到，KVA地址的16位Most Significant Bit(MSB)都是1，UVA的MSB都是0。因此，KVA格式都是<code>0xffff .... .... ....</code> ，UVA格式都是<code>0x0000 .... .... ....</code>。</p>
+<p>48位LSB的划分是和CPU的MMU(Memory Management Unit)相关的:</p>
+<ul>
+<li>PGD: Page Global Directory</li>
+<li>PUD: Page Upper Directory</li>
+<li>PMD: Page Middle Directory</li>
+<li>PTE: Page Table Entry</li>
+<li>offset</li>
+</ul>
+<p>48位的地址空间中，4KB每页，KVA和UVA划分方式如下：</p>
+<ul>
+<li>Canonical lower half, 128TB: User VAS, from <code>0x0</code> to <code>0x0000 7fff ffff ffff</code></li>
+<li>Canonical upper half, 128TB: Kernel VAS, from <code>0xffff 8000 0000 0000</code> to <code>0xffff ffff ffff ffff</code></li>
+</ul>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_3.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_3.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_3.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_3.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>如图7.3所示，大部分的VAS都是空没有用到的。</p>
+<p>图7.4展示了常见的<code>user:kernel</code> VM Split比例：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_4.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_4.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_4.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_4.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<h3 id="the-process-vas">The process VAS</h3>
+<p>所有存活的进程都有它们自己的user-mode VAS，但是会共享kernel segment，如图7.5所示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_5.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_5.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_5.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_5.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>通过proc文件系统，可以方便地查看进程的VAS信息。</p>
+<p>通过 <code>/proc/[pid]/maps</code> 可以查看进程的内存映射。如图7.6所示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_6.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_6.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_6.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_6.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>其中每一行都代表一个用户态VAS的segment/mapping</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">address                   perms offset  dev   inode       pathname
+</span></span><span class="line"><span class="cl">555d83b65000-555d83b6d000 r-xp <span class="m">00000000</span> 08:01 <span class="m">524313</span>      /bin/cat
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>每个字段含义为：</p>
+<ul>
+<li>address：start_uva - end_uva</li>
+<li>perms：前三个表示rwx权限，最后一个为s(shared)或p(private, copy on write)。</li>
+<li>offset：对于文件映射，表示相对文件起始位置的offset；对于匿名映射，永远是0。</li>
+<li>dev：格式为<code>major:minor</code> ，只对文件映射有效，表示文件所在设备。</li>
+<li>inode：只对文件映射有效。</li>
+<li>pathname：表示被映射的文件的路径。</li>
+</ul>
+<p>图7.6最后一行的<code>vsyscall</code> 是一种古老的进行系统调用的优化手段，可以不用深究。</p>
+<p>除了 <code>/proc/[pid]/maps</code> 之外，还有其他前端工具可以帮助查看进程内存映射。如  <code>/proc/[pid]/smaps</code> 和 <code>pmap</code> ，这两个命令展示了更详细的信息。<code>smem</code> 工具可以展示物理内存占用情况。</p>
+<p>作者还提供了一个他自己写的可视化工具<a href="https://github.com/kaiwan/procmap" target="_blank" rel="noopener noreffer">procmap</a>。图7.8和7.9就是该工具的部分结果截图。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_8.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_8.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_8.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_8.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_9.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_9.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_9.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_9.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<h3 id="virtual-memory-area">Virtual Memory Area</h3>
+<p><code>/proc/[pid]/maps</code> 中的每一行都是由内核中的数据结构VMA推断而来。用户空间VAS中的每个segment/mapping都对应一个VMA结构。</p>
+<p>对于每个进程，内核会通过task structure维护一个VMA“链”(实际上是红黑树)，<code>current-&gt;mm-&gt;mmap</code>。通过VMA里的信息，内核可以执行page faults等内存管理操作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// include/linux/mm_types.h
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">struct</span> <span class="n">vm_area_struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* The first cache line has the info for VMA tree walking. */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">vm_start</span><span class="p">;</span>       <span class="cm">/* Our start address within vm_mm. */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">vm_end</span><span class="p">;</span>         <span class="cm">/* The first byte after our end address within vm_mm. */</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">vm_area_struct</span> <span class="o">*</span><span class="n">vm_next</span><span class="p">,</span> <span class="o">*</span><span class="n">vm_prev</span><span class="p">;</span>  <span class="cm">/* Linked list of VM areas per task, sorted by address */</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">rb_node</span> <span class="n">vm_rb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[...]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">mm_struct</span> <span class="o">*</span><span class="n">vm_mm</span><span class="p">;</span> <span class="cm">/* The address space we belong to */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pgprot_t</span> <span class="n">vm_page_prot</span><span class="p">;</span>   <span class="cm">/* Access permissions of this VMA */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">vm_flags</span><span class="p">;</span>  <span class="cm">/* Flags, see mm.h */</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[...]</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Function pointers to deal with this VMA */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">struct</span> <span class="n">vm_operations_struct</span> <span class="o">*</span><span class="n">vm_opts</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Information about our backing store */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">vm_pgoff</span><span class="p">;</span> <span class="cm">/* Offset (within vm_file) in PAGE_SIZE units */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">vm_file</span><span class="p">;</span> <span class="cm">/* File we map to (can be NULL) */</span>
+</span></span><span class="line"><span class="cl">    <span class="p">[...]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">__randomize_layout</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="kernel-segment">Kernel Segment</h3>
+<p>虽然kernel segment的内存布局会根据CPU架构的不同而不同，但还是有些共性的。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_10.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_10.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_10.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_10.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>依次看一下：</p>
+<ul>
+<li>The user mode VAS</li>
+<li>The lowmem region：这部分会和物理内存做直接的映射（32位系统很可能存在放不下的情况，系统会通过<code>ZONE_HIGHRAM</code>做间接映射来解决。64位系统不存在该问题。）。后面会在<em>Direct-mapped RAM and address translation</em>那部分详细说明。</li>
+<li>The kernel vmalloc region：内核核心或驱动可以通过<code>vmalloc()</code>API族在该位置分配空间。也叫做ioremap空间。</li>
+<li>The kernel modules space：保存Loadable Kernel Modules(LKMs)的文本段和数据段。</li>
+</ul>
+<p>作者提供的查看内核内存布局的工具<code>ch7/show_kernel_seg/kernel_seg.c</code>，是通过查询描述各个部分位置的宏或者变量来实现的。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_12.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_12.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_12.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_12.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>通过作者提供的procmap工具也可以查看内核的内存布局：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_15.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_15.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_15.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_15.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>作者提供的<code>ch7/show_kernel_seg/kernel_seg.c</code>也可以一起查看内核VAS和用户VAS：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_16.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_16.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_16.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_16.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>在内核源码中，针对不同架构，都有文档说明其内存布局。如<code>Documentation/x86/x86_64/mm.rst</code>和<code>Documentation/arm64/memory.rst</code>等。</p>
+<h3 id="randomizing-the-memory-layout---kaslr">Randomizing the memory layout - [K]ASLR</h3>
+<p>为了安全，避免攻击者利用“已知的”虚拟地址，用户空间和内核空间都支持ASLR(Address Space Layout Randomization)技术。</p>
+<p>用户态的ASLR自linux 2.6.12开始支持。其状态可通过<code>/proc/sys/kernel/randomize_va_space</code>查看。可随机化的部分包括共享库的起始地址，基于mmap分配的空间，栈开始地址，堆，vDSO页。</p>
+<p>3.14开始，内核空间也支持ASLR，称为KASLR。如<code>Documentation/x86/x86_64/mm.rst</code>里的说明：</p>
+<blockquote>
+<p>Note that if CONFIG_RANDOMIZE_MEMORY is enabled, the direct mapping of all physical memory, vmalloc/ioremap space and virtual memory map are randomized. Their order is preserved but their base will be offset early at boot time.</p>
+</blockquote>
+<p>作者提供了一个脚本 <code>ch7/ASLR_check.sh</code> 用来检测用户态和内核态的ASLR设置：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_17.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_17.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_17.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_17.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>这个脚本也可以设置用户态ASLR状态：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_18.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_18.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_18.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_18.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<h3 id="physical-memory">Physical memory</h3>
+<p>在启动时，内核会把物理内存按树型层次结构来管理，node -&gt; zone -&gt; page frame。</p>
+<p>Nodes are data structures used to denote a physical RAM module on the system motherboard and its associated controller chipset. 即Node是软件层面上的概念。每个node都关联一个physical socket（或者一组处理器核心）。其数据结构为<code>include/linux/mmzone.h</code>中的<code>pg_data_t</code>。</p>
+<p>存在两种架构：</p>
+<ul>
+<li>NUMA (Non-Uniform Memory Access) system：存在多个node。</li>
+<li>UMA (Uniform Memory Access) system：只有一个node。linux会将UMA伪装成NUMA来处理。</li>
+</ul>
+<p>下面的示例基于AMD的32核处理器（包含两个physical socket，P#0和P#1），32GB内存（分为4个physical banks）：</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_19.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_19.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_19.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_19.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_Hwlo.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_Hwlo.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_Hwlo.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_Hwlo.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>为了性能，在每个core上跑的线程分配内存时，会优先从其对应的NUMA node中获取。如果其中没有空闲的page frame，则内核会通过特定机制从其他node获取。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_20.png"
+        data-srcset="https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_20.png, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_20.png 1.5x, https://raw.githubusercontent.com/yrc0d3/imagehosting/master/img/lkp_7_20.png 2x"
+        data-sizes="auto"
+        alt="image"
+        title="image" /></p>
+<p>zone由page frame构成（更准确的说，zone包含的是Page Frame Numbers, PFNs）。通过<code>/proc/buddyinfo</code>可以查看node和zone的层级结构。其数据结构为<code>include/linux/mmzone.h</code>中的<code>zone</code>。</p>
 <h2 id="kernel-memory-allocation-for-module-authors">Kernel Memory Allocation for Module Authors</h2>
 <h2 id="the-cpu-scheduler">The CPU Scheduler</h2>
 </div><div class="post-footer" id="post-footer">
